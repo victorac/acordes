@@ -1,20 +1,14 @@
-import React from 'react';
-import DraggableComponent from './DraggableComponent';
+import React from "react";
+import DraggableComponent from "./DraggableComponent";
 
 const GridContainer: React.FC = () => {
   return (
     <div
-      style={{
-        width: '500px',
-        height: '500px',
-        overflow: 'auto',
-        position: 'relative',
-        border: '1px solid black',
-      }}
+      className="grid grid-cols-6 grid-rows-24 sm:grid-cols-24 sm:grid-rows-6 
+                 overflow-y-auto sm:overflow-y-hidden sm:overflow-x-auto 
+                 h-full w-full relative"
     >
       <DraggableComponent id={1} initialX={0} initialY={0} />
-      <DraggableComponent id={2} initialX={100} initialY={100} />
-      {/* Add more components as needed */}
     </div>
   );
 };
