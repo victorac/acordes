@@ -5,7 +5,9 @@ const GRID_WIDTH = 50; // Width of each grid cell in pixels
 const GRID_HEIGHT = 147; // Height of each grid cell in pixels
 const CELL_WIDTH = 50;
 const CELL_HEIGHT = 72;
-const SCROLL_THRESHOLD = 50; // Distance from border to start scrolling
+const X_SCROLL_THRESHOLD = 50; // Distance from border to start scrolling
+const Y_SCROLL_THRESHOLD = 147; // Distance from border to start scrolling
+const SCROLL_SPEED = 10; // Pixels to scroll per frame
 
 interface Position {
   x: number;
@@ -26,7 +28,7 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
   const ref = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState<Position>({
     x: initialX,
-    y: initialY + GRID_HEIGHT/2 - CELL_HEIGHT/2,
+    y: initialY + GRID_HEIGHT / 2 - CELL_HEIGHT / 2,
   });
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [startPos, setStartPos] = useState<Position>({ x: 0, y: 0 });
@@ -60,24 +62,23 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
       const { x, y } = getEventPosition(e);
       const containerRect = container.getBoundingClientRect();
 
-      // Calculate new position
+      // Calculate new position relative to the container
       const newX = x - startPos.x;
-      const newY = y - startPos.y;
+      const newY = y - startPos.y + container.scrollTop;
 
       // Update position
       setPosition({ x: newX, y: newY });
 
       // Auto-scroll
-      if (newX < SCROLL_THRESHOLD) {
-        container.scrollLeft -= GRID_WIDTH;
-      } else if (newX > containerRect.width - SCROLL_THRESHOLD) {
-        container.scrollLeft += GRID_WIDTH;
+      if (x < container.scrollLeft + X_SCROLL_THRESHOLD) {
+        container.scrollLeft -= SCROLL_SPEED;
+      } else if (x > containerRect.right - X_SCROLL_THRESHOLD) {
+        container.scrollLeft += SCROLL_SPEED;
       }
-
-      if (newY < SCROLL_THRESHOLD) {
-        container.scrollTop -= GRID_HEIGHT;
-      } else if (newY > containerRect.height - SCROLL_THRESHOLD) {
-        container.scrollTop += GRID_HEIGHT;
+      if (y < containerRect.top + Y_SCROLL_THRESHOLD) {
+        container.scrollTop -= SCROLL_SPEED;
+      } else if (y > containerRect.bottom - Y_SCROLL_THRESHOLD) {
+        container.scrollTop += SCROLL_SPEED;
       }
     };
 
@@ -86,15 +87,13 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
       // Get center of the cell
       const centerX = position.x + CELL_WIDTH / 2;
       const centerY = position.y + CELL_HEIGHT / 2;
-      console.log("centerX", centerX);
-      console.log("centerY", centerY);
-      console.log(position.x, position.y);
       // Snap cell to neares grid cell
-      const newCellX = Math.floor(centerX / GRID_WIDTH) * GRID_WIDTH;
+      const newCellX =
+      Math.max(Math.floor(centerX / GRID_WIDTH), 0) * GRID_WIDTH;
       const newCellY =
-        Math.floor(centerY / GRID_HEIGHT) * GRID_HEIGHT +
-        GRID_HEIGHT / 2 -
-        CELL_HEIGHT / 2;
+      Math.max(Math.floor(centerY / GRID_HEIGHT), 0) * GRID_HEIGHT +
+      GRID_HEIGHT / 2 -
+      CELL_HEIGHT / 2;
       // Update position
       setPosition({ x: newCellX, y: newCellY });
     };
@@ -123,7 +122,7 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
   return (
     <div
       ref={ref}
-      className="rounded-[200px]"
+      className="rounded-[200px] z-10"
       style={{
         position: "absolute",
         left: `${position.x}px`,
