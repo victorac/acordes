@@ -1,5 +1,7 @@
 "use client";
 import React, { useRef, useEffect, useState } from "react";
+import Rive from "@rive-app/react-canvas";
+import { basePath } from '../config'
 
 const GRID_WIDTH = 50; // Width of each grid cell in pixels
 const GRID_HEIGHT = 147; // Height of each grid cell in pixels
@@ -89,11 +91,11 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
       const centerY = position.y + CELL_HEIGHT / 2;
       // Snap cell to neares grid cell
       const newCellX =
-      Math.max(Math.floor(centerX / GRID_WIDTH), 0) * GRID_WIDTH;
+        Math.max(Math.floor(centerX / GRID_WIDTH), 0) * GRID_WIDTH;
       const newCellY =
-      Math.max(Math.floor(centerY / GRID_HEIGHT), 0) * GRID_HEIGHT +
-      GRID_HEIGHT / 2 -
-      CELL_HEIGHT / 2;
+        Math.max(Math.floor(centerY / GRID_HEIGHT), 0) * GRID_HEIGHT +
+        GRID_HEIGHT / 2 -
+        CELL_HEIGHT / 2;
       // Update position
       setPosition({ x: newCellX, y: newCellY });
     };
@@ -122,20 +124,22 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
   return (
     <div
       ref={ref}
-      className="rounded-[200px] z-10"
+      className="w-full h-full"
       style={{
         position: "absolute",
         left: `${position.x}px`,
         top: `${position.y}px`,
         width: `${CELL_WIDTH}px`,
         height: `${CELL_HEIGHT}px`,
-        backgroundColor: isDragging ? "lightblue" : "lightgray",
-        opacity: isDragging ? 0.5 : 1,
         cursor: "move",
         touchAction: "none", // Prevents scrolling on touch devices
       }}
     >
-      Drag me {id}
+      <Rive
+        src={`${basePath}/note-interaction-lab.riv`}
+        stateMachines="State Machine 1"
+        artboard="NoteComponentRive"
+      />
     </div>
   );
 };
