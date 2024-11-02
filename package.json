@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "export": "next export",
-    "deploy": "gh-pages -d out -t true"
+    "export": "next build && next export",
+    "deploy": "touch out/.nojekyll && gh-pages -d out -t true"
   },
   "dependencies": {
     "@rive-app/react-canvas": "^4.15.2",

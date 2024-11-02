@@ -5,11 +5,8 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
-  // Only use basePath and assetPrefix when building for production
-  ...(process.env.NODE_ENV === 'production' ? {
-    basePath: '/acordes',
-    assetPrefix: '/acordes/',
-  } : {}),
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/acordes' : '',
+  basePath: process.env.NODE_ENV === 'production' ? '/acordes' : '',
 };
 
 export default nextConfig;
