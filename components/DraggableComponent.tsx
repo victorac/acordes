@@ -1,7 +1,7 @@
 "use client";
 import React, { useRef, useEffect, useState } from "react";
 import Rive from "@rive-app/react-canvas";
-import { basePath } from '../config'
+import { basePath } from "../config";
 
 const GRID_WIDTH = 50; // Width of each grid cell in pixels
 const GRID_HEIGHT = 147; // Height of each grid cell in pixels
@@ -123,6 +123,7 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
 
   return (
     <div
+      id={id.toString()}
       ref={ref}
       className="w-full h-full"
       style={{
