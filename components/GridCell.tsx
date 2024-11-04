@@ -12,7 +12,7 @@ interface GridCellProps {
 
 const GridCell: React.FC<GridCellProps> = ({ id, children }) => {
   return (
-    <Droppable id={id} className="border border-red-300 w-[50px] h-[147px] md:w-[147px] md:h-[50px]">
+    <Droppable id={id} className="border border-red-300 w-[52px] h-[149px] md:w-[149px] md:h-[48px]">
       {children}
     </Droppable>
   );

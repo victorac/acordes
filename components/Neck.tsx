@@ -5,6 +5,7 @@ import GridCell from "./GridCell";
 import dynamic from "next/dynamic";
 import { DragEndEvent } from "@dnd-kit/core";
 import useScreenSize from "@/hooks/useScreenSize";
+import { restrictToFirstScrollableAncestor } from "@dnd-kit/modifiers";
 
 // Create client-only DndContext
 const DndContext = dynamic(
@@ -89,7 +90,10 @@ const Neck: React.FC = () => {
   });
 
   return (
-    <DndContext onDragEnd={handleDragEnd}>
+    <DndContext
+      onDragEnd={handleDragEnd}
+      modifiers={[restrictToFirstScrollableAncestor]}
+    >
       <div
         onScroll={handleScroll}
         className="
@@ -101,6 +105,7 @@ const Neck: React.FC = () => {
         md:overflow-y-hidden
         md:items-start
         md:px-4
+        my-2
         h-full w-full relative flex-grow"
       >
         {neckCases}

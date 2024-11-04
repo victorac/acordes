@@ -14,7 +14,7 @@ const Note: React.FC<NoteProps> = ({ id }) => {
         src={`${basePath}/note-interaction-lab.riv`}
         stateMachines="State Machine 1"
         artboard="NoteComponentRive"
-        className="w-[50px] h-[147px] md:w-[147px] md:h-[50px]"
+        className="w-[50px] h-[147px] md:w-[147px] md:h-[46px]"
       />
     </Draggable>
   );

@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",
+    "@dnd-kit/modifiers": "^7.0.0",
     "@rive-app/react-canvas": "^4.15.2",
     "next": "15.0.2",
     "react": "^18.0.0",
