@@ -19,9 +19,9 @@ const Note: React.FC<NoteProps> = ({ id }) => {
 
   useEffect(() => {
     if (rive) {
-      console.log("Rive text was initially: ", rive.getTextRunValue("Run 1"));
-      rive.setTextRunValue("Run 1", "New Text!!");
-      console.log("Rive text is now: ", rive.getTextRunValue("Run 1"));
+      // console.log("Rive text was initially: ", rive.getTextRunValue("Run 1"));
+      // rive.setTextRunValue("Run 1", "New Text!!");
+      // console.log("Rive text is now: ", rive.getTextRunValue("Run 1"));
     }
   }, [rive]);
 

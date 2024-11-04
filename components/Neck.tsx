@@ -1,63 +1,58 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import Note from "./Note";
 import GridCell from "./GridCell";
-import dynamic from "next/dynamic";
 import { DragEndEvent } from "@dnd-kit/core";
 import useScreenSize from "@/hooks/useScreenSize";
 import { restrictToFirstScrollableAncestor } from "@dnd-kit/modifiers";
+import { DndContext } from "@dnd-kit/core";
 
-// Create client-only DndContext
-const DndContext = dynamic(
-  () => import("@dnd-kit/core").then((mod) => mod.DndContext),
-  { ssr: false }
-);
+const INITIAL_CASES = 24;
+const CASES_WINDOW_SIZE = 24;
+const MIN_SCROLL_THRESHOLD = 100;
 
 const Neck: React.FC = () => {
   const strings = [6, 5, 4, 3, 2, 1];
-  const casesWindowSize = 24;
 
   const [parent, setParent] = useState<string | number | null>("cell-6-0");
   const [casesArray, setCasesArray] = useState(
-    Array.from({ length: casesWindowSize }, (_, i) => i)
+    Array.from({ length: CASES_WINDOW_SIZE }, (_, i) => i)
   );
   const [isClient, setIsClient] = useState(false);
   const isSmallScreen = useScreenSize();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setIsClient(true);
   }, []);
-
-  const draggableNote = <Note id="draggable" />;
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const target = e.target as HTMLDivElement;
 
-    function updateCasesArray() {
+    const updateCasesArray = () => {
       setCasesArray((prev) => [
         ...prev,
-        ...Array.from({ length: casesWindowSize }, (_, i) => prev.length + i),
+        ...Array.from({ length: CASES_WINDOW_SIZE }, (_, i) => prev.length + i),
       ]);
-    }
+    };
 
     if (isSmallScreen) {
-      if (target.scrollTop + target.clientHeight >= target.scrollHeight - 100) {
-        // Add more cases to the bottom
-        updateCasesArray();
-      }
-      if (target.scrollTop === 0) {
-        // Reset to the first cases
-        setCasesArray(Array.from({ length: casesWindowSize }, (_, i) => i));
-      }
+      const isNearBottom =
+        target.scrollTop + target.clientHeight >=
+        target.scrollHeight - MIN_SCROLL_THRESHOLD;
+      const isAtTop = target.scrollTop === 0;
+
+      if (isNearBottom) updateCasesArray();
+      if (isAtTop)
+        setCasesArray(Array.from({ length: INITIAL_CASES }, (_, i) => i));
     } else {
-      if (target.scrollLeft + target.clientWidth >= target.scrollWidth - 100) {
-        // Add more cases to the right
-        updateCasesArray();
-      }
-      if (target.scrollLeft === 0) {
-        // Reset to the first cases
-        setCasesArray(Array.from({ length: casesWindowSize }, (_, i) => i));
-      }
+      const isNearRight =
+        target.scrollLeft + target.clientWidth >=
+        target.scrollWidth - MIN_SCROLL_THRESHOLD;
+      const isAtLeft = target.scrollLeft === 0;
+
+      if (isNearRight) updateCasesArray();
+      if (isAtLeft)
+        setCasesArray(Array.from({ length: INITIAL_CASES }, (_, i) => i));
     }
   };
 
@@ -76,6 +71,7 @@ const Neck: React.FC = () => {
     return <div className="h-full w-full">Loading...</div>;
   }
 
+  const draggableNote = <Note id="draggable" />;
   const neckCases = Array.from({ length: casesArray.length }, (_, caseNum) => {
     const id = `case-${caseNum}`;
     return (
