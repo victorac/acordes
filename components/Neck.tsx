@@ -15,7 +15,7 @@ const DndContext = dynamic(
 
 const Neck: React.FC = () => {
   const strings = [6, 5, 4, 3, 2, 1];
-  const casesWindowSize = 12;
+  const casesWindowSize = 24;
 
   const [parent, setParent] = useState<string | number | null>("cell-6-0");
   const [casesArray, setCasesArray] = useState(
@@ -97,16 +97,15 @@ const Neck: React.FC = () => {
       <div
         onScroll={handleScroll}
         className="
+        container mx-auto
         flex flex-col items-center
         overflow-y-auto
         md:overflow-x-auto
         md:flex-row
         md:justify-start
         md:overflow-y-hidden
-        md:items-start
-        md:px-4
         my-2
-        h-full w-full relative flex-grow"
+        h-full relative flex-grow"
       >
         {neckCases}
       </div>

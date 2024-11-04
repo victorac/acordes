@@ -4,7 +4,7 @@ import Neck from "@/components/Neck";
 
 export default function Home() {
   return (
-    <div className="flex flex-col w-screen h-screen items-center bg-[#101013]">
+    <div className="flex flex-col w-full h-svh items-center bg-[#101013]">
       <Header />
       <Neck />
       <ActionBar />
