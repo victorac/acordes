@@ -33,24 +33,29 @@ const Neck: React.FC = () => {
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const target = e.target as HTMLDivElement;
 
+    function updateCasesArray() {
+      setCasesArray((prev) => [
+        ...prev,
+        ...Array.from({ length: casesWindowSize }, (_, i) => prev.length + i),
+      ]);
+    }
+
     if (isSmallScreen) {
       if (target.scrollTop + target.clientHeight >= target.scrollHeight - 100) {
-        setCasesArray((prev) => [
-          ...prev,
-          ...Array.from({ length: casesWindowSize }, (_, i) => prev.length + i),
-        ]);
+        // Add more cases to the bottom
+        updateCasesArray();
       }
       if (target.scrollTop === 0) {
+        // Reset to the first cases
         setCasesArray(Array.from({ length: casesWindowSize }, (_, i) => i));
       }
     } else {
       if (target.scrollLeft + target.clientWidth >= target.scrollWidth - 100) {
-        setCasesArray((prev) => [
-          ...prev,
-          ...Array.from({ length: casesWindowSize }, (_, i) => prev.length + i),
-        ]);
+        // Add more cases to the right
+        updateCasesArray();
       }
       if (target.scrollLeft === 0) {
+        // Reset to the first cases
         setCasesArray(Array.from({ length: casesWindowSize }, (_, i) => i));
       }
     }
