@@ -68,7 +68,11 @@ const Neck: React.FC = () => {
 
   // Show loading or placeholder until client-side
   if (!isClient) {
-    return <div className="h-full w-full">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center w-full h-full">
+        <div className="animate-pulse text-[#B3BDC7]">Loading...</div>;
+      </div>
+    );
   }
 
   const draggableNote = <Note id="draggable" />;
