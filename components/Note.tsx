@@ -26,7 +26,7 @@ const Note: React.FC<NoteProps> = ({ id }) => {
   }, [rive]);
 
   return (
-    <Draggable id={id} className="w-[50px] h-[147px] md:w-[147px] md:h-[46px]">
+    <Draggable id={id} className="w-[48px] h-[80px] md:w-[80px] md:h-[48px]">
       <RiveComponent />
     </Draggable>
   );

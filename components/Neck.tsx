@@ -6,20 +6,21 @@ import { DragEndEvent } from "@dnd-kit/core";
 import useScreenSize from "@/hooks/useScreenSize";
 import { restrictToFirstScrollableAncestor } from "@dnd-kit/modifiers";
 import { DndContext } from "@dnd-kit/core";
+import Fret from "./Fret";
 
 const INITIAL_CASES = 24;
 const CASES_WINDOW_SIZE = 24;
 const MIN_SCROLL_THRESHOLD = 100;
 
 const Neck: React.FC = () => {
-  const strings = [6, 5, 4, 3, 2, 1];
-
+  
   const [parent, setParent] = useState<string | number | null>("cell-6-0");
   const [casesArray, setCasesArray] = useState(
     Array.from({ length: CASES_WINDOW_SIZE }, (_, i) => i)
   );
   const [isClient, setIsClient] = useState(false);
   const isSmallScreen = useScreenSize();
+  const strings = isSmallScreen ? [6, 5, 4, 3, 2, 1] : [1,2,3,4,5,6];
 
   useLayoutEffect(() => {
     setIsClient(true);
@@ -95,26 +96,27 @@ const Neck: React.FC = () => {
   });
 
   return (
-    <DndContext
-      onDragEnd={handleDragEnd}
-      modifiers={[restrictToFirstScrollableAncestor]}
-    >
-      <div
-        onScroll={handleScroll}
-        className="
-        container mx-auto
-        flex flex-col items-center
-        overflow-y-auto
-        md:overflow-x-auto
-        md:flex-row
-        md:justify-start
-        md:overflow-y-hidden
-        my-2
-        h-full relative flex-grow"
+      <DndContext
+        onDragEnd={handleDragEnd}
+        modifiers={[restrictToFirstScrollableAncestor]}
       >
-        {neckCases}
-      </div>
-    </DndContext>
+        <div
+          onScroll={handleScroll}
+          className="
+          container mx-auto
+          flex flex-col items-center
+          overflow-y-auto
+          md:overflow-x-auto
+          md:flex-row
+          md:justify-start
+          md:overflow-y-hidden
+          my-2
+          h-full relative flex-grow gap-2"
+        >
+          <Fret/>
+          {neckCases}
+        </div>
+      </DndContext>
   );
 };
 
