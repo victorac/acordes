@@ -19,13 +19,64 @@ type NotePin = {
   caseNumber: number;
 };
 
-const findNoteForCell = (notes: Record<string, NotePin>, stringNum: number, caseNum: number) => {
+function findNoteForCell(
+  notes: Record<string, NotePin>,
+  stringNum: number,
+  caseNum: number
+) {
   return Object.values(notes).find(
     (note) => note.string === stringNum && note.caseNumber === caseNum
   );
-};
+}
+
+function getNoteData(
+  stringNum: number,
+  caseNum: number,
+  tunning: { [key: number]: string },
+  key = "E"
+) {
+  const allNotes = [
+    "A",
+    "A#",
+    "B",
+    "C",
+    "C#",
+    "D",
+    "D#",
+    "E",
+    "F",
+    "F#",
+    "G",
+    "G#",
+  ];
+  const intervalToStringMap: { [key: number]: string } = {
+    0: "R",
+    1: "m2",
+    2: "2",
+    3: "m3",
+    4: "3",
+    5: "P4",
+    6: "Aug4",
+    7: "5",
+    8: "m6",
+    9: "6",
+    10: "7",
+    11: "M7",
+  };
+
+  const stringTunnig = tunning[stringNum];
+  const startIndex = allNotes.findIndex((note) => note === stringTunnig);
+  const noteIndex = (startIndex + caseNum) % allNotes.length;
+  const keyIndex = allNotes.findIndex((note) => note === key);
+  const interval = (noteIndex - keyIndex + allNotes.length) % allNotes.length;
+  return {
+    interval: intervalToStringMap[interval],
+    noteName: allNotes[noteIndex],
+  };
+}
 
 const Neck: React.FC = () => {
+  const key = "E";
   const tunning: { [key: number]: string } = {
     1: "E",
     2: "B",
@@ -93,9 +144,8 @@ const Neck: React.FC = () => {
     }
   }
 
-  function handleDragEnd(event: DragEndEvent) {
+  function handleDragOver(event: DragOverEvent) {
     const { over } = event;
-    // If the item is dropped over a container, set it as the parent
     // otherwise reset the parent to `null`
     if (over?.id) {
       const parent = over.id;
@@ -115,14 +165,6 @@ const Neck: React.FC = () => {
     }
   }
 
-  function handleDragOver(event: DragOverEvent) {
-    const { over } = event;
-    // if (over?.id) {
-    //   setParent(over.id);
-    // }
-    // console.log(event);
-  }
-
   // Show loading or placeholder until client-side
   if (!isClient) {
     return (
@@ -137,18 +179,32 @@ const Neck: React.FC = () => {
     return (
       <div id={id} key={id} className="flex md:flex-col">
         {strings.map((stringNum) => (
-            <GridCell
+          <GridCell
             id={`cell-${stringNum}-${caseNum}`}
             key={`${stringNum}-${caseNum}`}
             caseNumber={caseNum}
             string={stringNum}
             onAddNote={handleAddNote}
-            >
+          >
             {(() => {
               const note = findNoteForCell(notes, stringNum, caseNum);
-              return note?.id ? <Note key={note.id} id={note.id} /> : null;
+              // get interval and note name based on string and case number
+              const { interval, noteName } = getNoteData(
+                stringNum,
+                caseNum,
+                tunning,
+                key
+              );
+              return note?.id ? (
+                <Note
+                  key={note.id}
+                  id={note.id}
+                  interval={interval}
+                  noteName={noteName}
+                />
+              ) : null;
             })()}
-            </GridCell>
+          </GridCell>
         ))}
       </div>
     );
@@ -157,7 +213,6 @@ const Neck: React.FC = () => {
   return (
     <DndContext
       onDragOver={handleDragOver}
-      onDragEnd={handleDragEnd}
       modifiers={[restrictToFirstScrollableAncestor]}
     >
       <div
