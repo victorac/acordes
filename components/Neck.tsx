@@ -70,7 +70,7 @@ const Neck: React.FC = () => {
   if (!isClient) {
     return (
       <div className="flex items-center justify-center w-full h-full">
-        <div className="animate-pulse text-[#B3BDC7]">Loading...</div>;
+        <div className="animate-pulse text-[#B3BDC7]">Loading...</div>
       </div>
     );
   }
