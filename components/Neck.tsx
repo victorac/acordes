@@ -12,15 +12,18 @@ const INITIAL_CASES = 24;
 const CASES_WINDOW_SIZE = 24;
 const MIN_SCROLL_THRESHOLD = 100;
 
-const Neck: React.FC = () => {
-  
+interface NeckProps {
+  tunning: string[];
+}
+
+const Neck: React.FC<NeckProps> = ({ tunning }) => {
   const [parent, setParent] = useState<string | number | null>("cell-6-0");
   const [casesArray, setCasesArray] = useState(
     Array.from({ length: CASES_WINDOW_SIZE }, (_, i) => i)
   );
   const [isClient, setIsClient] = useState(false);
   const isSmallScreen = useScreenSize();
-  const strings = isSmallScreen ? [6, 5, 4, 3, 2, 1] : [1,2,3,4,5,6];
+  const strings = isSmallScreen ? [6, 5, 4, 3, 2, 1] : [1, 2, 3, 4, 5, 6];
 
   useLayoutEffect(() => {
     setIsClient(true);
@@ -87,6 +90,7 @@ const Neck: React.FC = () => {
             key={`${stringNum}-${caseNum}`}
             caseNumber={caseNum}
             string={stringNum}
+            stringTunning={tunning[stringNum]}
           >
             {parent === `cell-${stringNum}-${caseNum}` ? draggableNote : null}
           </GridCell>
@@ -96,13 +100,13 @@ const Neck: React.FC = () => {
   });
 
   return (
-      <DndContext
-        onDragEnd={handleDragEnd}
-        modifiers={[restrictToFirstScrollableAncestor]}
-      >
-        <div
-          onScroll={handleScroll}
-          className="
+    <DndContext
+      onDragEnd={handleDragEnd}
+      modifiers={[restrictToFirstScrollableAncestor]}
+    >
+      <div
+        onScroll={handleScroll}
+        className="
           container mx-auto
           flex flex-col items-center
           overflow-y-auto
@@ -112,11 +116,11 @@ const Neck: React.FC = () => {
           md:overflow-y-hidden
           my-2
           h-full relative flex-grow gap-2"
-        >
-          <Fret/>
-          {neckCases}
-        </div>
-      </DndContext>
+      >
+        <Fret />
+        {neckCases}
+      </div>
+    </DndContext>
   );
 };
 

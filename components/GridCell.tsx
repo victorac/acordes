@@ -7,10 +7,11 @@ interface GridCellProps {
   interval?: string;
   caseNumber?: number;
   string: number;
+  stringTunning: string;
   children?: React.ReactNode;
 }
 
-const GridCell: React.FC<GridCellProps> = ({ id, children, string }) => {
+const GridCell: React.FC<GridCellProps> = ({ id, children, string, stringTunning }) => {
   const thicknessMap: { [key: number]: string } = {
     1: 'before:w-[1px] md:before:h-[1px]',
     2: 'before:w-[2px] md:before:h-[2px]',
