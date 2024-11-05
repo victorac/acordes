@@ -2,7 +2,7 @@
 import React, { useState, useLayoutEffect } from "react";
 import Note from "./Note";
 import GridCell from "./GridCell";
-import { DragEndEvent, DragOverEvent } from "@dnd-kit/core";
+import { DragOverEvent } from "@dnd-kit/core";
 import useScreenSize from "@/hooks/useScreenSize";
 import { restrictToFirstScrollableAncestor } from "@dnd-kit/modifiers";
 import { DndContext } from "@dnd-kit/core";
@@ -66,7 +66,7 @@ function getNoteData(
 
   const stringTunnig = tunning[stringNum];
   const startIndex = allNotes.findIndex((note) => note === stringTunnig);
-  const noteIndex = (startIndex + caseNum) % allNotes.length;
+  const noteIndex = (startIndex + caseNum + 1) % allNotes.length;
   const keyIndex = allNotes.findIndex((note) => note === key);
   const interval = (noteIndex - keyIndex + allNotes.length) % allNotes.length;
   return {
