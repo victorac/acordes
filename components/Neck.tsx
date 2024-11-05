@@ -2,7 +2,7 @@
 import React, { useState, useLayoutEffect } from "react";
 import Note from "./Note";
 import GridCell from "./GridCell";
-import { DragEndEvent } from "@dnd-kit/core";
+import { DragEndEvent, DragOverEvent } from "@dnd-kit/core";
 import useScreenSize from "@/hooks/useScreenSize";
 import { restrictToFirstScrollableAncestor } from "@dnd-kit/modifiers";
 import { DndContext } from "@dnd-kit/core";
@@ -12,12 +12,30 @@ const INITIAL_CASES = 24;
 const CASES_WINDOW_SIZE = 24;
 const MIN_SCROLL_THRESHOLD = 100;
 
-interface NeckProps {
-  tunning: string[];
-}
+type NotePin = {
+  id: string;
+  parent: string | number | null;
+  string: number;
+  caseNumber: number;
+};
 
-const Neck: React.FC<NeckProps> = ({ tunning }) => {
-  const [parent, setParent] = useState<string | number | null>("cell-6-0");
+const findNoteForCell = (notes: Record<string, NotePin>, stringNum: number, caseNum: number) => {
+  return Object.values(notes).find(
+    (note) => note.string === stringNum && note.caseNumber === caseNum
+  );
+};
+
+const Neck: React.FC = () => {
+  const tunning: { [key: number]: string } = {
+    1: "E",
+    2: "B",
+    3: "G",
+    4: "D",
+    5: "A",
+    6: "E",
+  };
+  const [notes, setNotes] = useState<Record<string, NotePin>>({});
+  // const [parent, setParent] = useState<string | number | null>("cell-6-0");
   const [casesArray, setCasesArray] = useState(
     Array.from({ length: CASES_WINDOW_SIZE }, (_, i) => i)
   );
@@ -29,7 +47,22 @@ const Neck: React.FC<NeckProps> = ({ tunning }) => {
     setIsClient(true);
   }, []);
 
-  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+  function handleAddNote(string: number, caseNumber: number) {
+    setNotes((prev) => {
+      const id = `${Object.values(prev).length}`;
+      return {
+        ...prev,
+        [id]: {
+          id,
+          parent: `cell-${string}-${caseNumber}`,
+          string,
+          caseNumber,
+        },
+      };
+    });
+  }
+
+  function handleScroll(e: React.UIEvent<HTMLDivElement>) {
     const target = e.target as HTMLDivElement;
 
     const updateCasesArray = () => {
@@ -58,16 +91,36 @@ const Neck: React.FC<NeckProps> = ({ tunning }) => {
       if (isAtLeft)
         setCasesArray(Array.from({ length: INITIAL_CASES }, (_, i) => i));
     }
-  };
+  }
 
   function handleDragEnd(event: DragEndEvent) {
     const { over } = event;
-
     // If the item is dropped over a container, set it as the parent
     // otherwise reset the parent to `null`
     if (over?.id) {
-      setParent(over.id);
+      const parent = over.id;
+      const notePinId = event.active.id;
+      const [, stringNum, caseNum] = (parent as string).split("-");
+      const string = parseInt(stringNum);
+      const caseNumber = parseInt(caseNum);
+      setNotes((prev) => ({
+        ...prev,
+        [notePinId]: {
+          ...prev[notePinId],
+          parent,
+          string,
+          caseNumber,
+        },
+      }));
     }
+  }
+
+  function handleDragOver(event: DragOverEvent) {
+    const { over } = event;
+    // if (over?.id) {
+    //   setParent(over.id);
+    // }
+    // console.log(event);
   }
 
   // Show loading or placeholder until client-side
@@ -79,21 +132,23 @@ const Neck: React.FC<NeckProps> = ({ tunning }) => {
     );
   }
 
-  const draggableNote = <Note id="draggable" />;
   const neckCases = Array.from({ length: casesArray.length }, (_, caseNum) => {
     const id = `case-${caseNum}`;
     return (
       <div id={id} key={id} className="flex md:flex-col">
         {strings.map((stringNum) => (
-          <GridCell
+            <GridCell
             id={`cell-${stringNum}-${caseNum}`}
             key={`${stringNum}-${caseNum}`}
             caseNumber={caseNum}
             string={stringNum}
-            stringTunning={tunning[stringNum]}
-          >
-            {parent === `cell-${stringNum}-${caseNum}` ? draggableNote : null}
-          </GridCell>
+            onAddNote={handleAddNote}
+            >
+            {(() => {
+              const note = findNoteForCell(notes, stringNum, caseNum);
+              return note?.id ? <Note key={note.id} id={note.id} /> : null;
+            })()}
+            </GridCell>
         ))}
       </div>
     );
@@ -101,6 +156,7 @@ const Neck: React.FC<NeckProps> = ({ tunning }) => {
 
   return (
     <DndContext
+      onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
       modifiers={[restrictToFirstScrollableAncestor]}
     >
