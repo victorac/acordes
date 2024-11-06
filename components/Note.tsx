@@ -12,7 +12,7 @@ interface NoteProps {
 }
 
 const Note: React.FC<NoteProps> = ({ id, interval, noteName }) => {
-  const { rive, RiveComponent } = useRive({
+  const { rive,  } = useRive({
     src: `${basePath}/note-interaction-lab.riv`,
     artboard: "NoteComponentRive",
     stateMachines: "State Machine 1",

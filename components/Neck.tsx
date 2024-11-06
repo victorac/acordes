@@ -155,9 +155,8 @@ const Neck: React.FC = () => {
     }
   }
 
-  function handleDragOver(event: DragOverEvent) {
+  function handleDragEnd(event: DragOverEvent) {
     const { over } = event;
-    // otherwise reset the parent to `null`
     if (over?.id) {
       const parent = over.id;
       const notePinId = event.active.id;
@@ -223,7 +222,7 @@ const Neck: React.FC = () => {
 
   return (
     <DndContext
-      onDragOver={handleDragOver}
+      onDragEnd={handleDragEnd}
       modifiers={[restrictToFirstScrollableAncestor]}
     >
       <div
