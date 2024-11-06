@@ -12,7 +12,7 @@ interface NoteProps {
 }
 
 const Note: React.FC<NoteProps> = ({ id, interval, noteName }) => {
-  const { rive,  } = useRive({
+  const { rive, } = useRive({
     src: `${basePath}/note-interaction-lab.riv`,
     artboard: "NoteComponentRive",
     stateMachines: "State Machine 1",
@@ -34,18 +34,24 @@ const Note: React.FC<NoteProps> = ({ id, interval, noteName }) => {
     >
       {/* <RiveComponent /> */}
       <div
+        onTouchStart={(e) => {
+          e.preventDefault(); // Prevent default touch behavior
+          e.stopPropagation(); // Stop event from bubbling up
+        }}
         className={`
         select-none
-        w-[44px] h-[72px] md:w-[72px] md:h-[44px] rounded-[200px] p-1 flex flex-col items-center justify-center
+        touch-none
+        w-full h-full rounded-[200px] p-1
+        flex flex-col items-center justify-center
         ${interval === "R" ? "bg-[#E6FF81]" : "bg-[#E3EFF1]"}
       `}
       >
-        <span className="text-[#141935] text-[24px] font-semibold leading-7">
+        <div className="text-[#141935] text-[24px] font-semibold leading-7">
           {interval}
-        </span>
-        <span className="text-[#535B86] text-[14px] font-semibold leading-4">
+        </div>
+        <div className="text-[#535B86] text-[14px] font-semibold leading-4">
           {noteName}
-        </span>
+        </div>
       </div>
     </Draggable>
   );
