@@ -8,9 +8,9 @@ import { restrictToFirstScrollableAncestor } from "@dnd-kit/modifiers";
 import { DndContext } from "@dnd-kit/core";
 import Fret from "./Fret";
 
-const INITIAL_CASES = 24;
 const CASES_WINDOW_SIZE = 24;
-const MIN_SCROLL_THRESHOLD = 100;
+// 159px is the height of a cell
+const MIN_SCROLL_THRESHOLD = 159;
 
 type NotePin = {
   id: string;
@@ -117,10 +117,7 @@ const Neck: React.FC = () => {
     const target = e.target as HTMLDivElement;
 
     const updateCasesArray = () => {
-      setCasesArray((prev) => [
-        ...prev,
-        ...Array.from({ length: CASES_WINDOW_SIZE }, (_, i) => prev.length + i),
-      ]);
+      setCasesArray((prev) => [...prev.slice(6), ...prev.slice(0, 6)]);
     };
 
     if (isSmallScreen) {
@@ -129,18 +126,32 @@ const Neck: React.FC = () => {
         target.scrollHeight - MIN_SCROLL_THRESHOLD;
       const isAtTop = target.scrollTop === 0;
 
-      if (isNearBottom) updateCasesArray();
+      if (isNearBottom) {
+        // remove first 6 cells and add them to the end
+        updateCasesArray();
+        // scroll up 6 cells + five gaps between cells
+        target.scrollTo({
+          top: target.scrollTop - MIN_SCROLL_THRESHOLD * 6 - 5 * 8,
+        });
+      }
       if (isAtTop)
-        setCasesArray(Array.from({ length: INITIAL_CASES }, (_, i) => i));
+        setCasesArray(Array.from({ length: CASES_WINDOW_SIZE }, (_, i) => i));
     } else {
       const isNearRight =
         target.scrollLeft + target.clientWidth >=
         target.scrollWidth - MIN_SCROLL_THRESHOLD;
       const isAtLeft = target.scrollLeft === 0;
 
-      if (isNearRight) updateCasesArray();
+      if (isNearRight) {
+        // remove first 6 cells and add them to the end
+        target.scrollTo({
+          left: target.scrollLeft - MIN_SCROLL_THRESHOLD * 6 - 5 * 8,
+        });
+        // scroll left 6 cells + five gaps between cells
+        updateCasesArray();
+      }
       if (isAtLeft)
-        setCasesArray(Array.from({ length: INITIAL_CASES }, (_, i) => i));
+        setCasesArray(Array.from({ length: CASES_WINDOW_SIZE }, (_, i) => i));
     }
   }
 
@@ -174,14 +185,14 @@ const Neck: React.FC = () => {
     );
   }
 
-  const neckCases = Array.from({ length: casesArray.length }, (_, caseNum) => {
-    const id = `case-${caseNum}`;
+  const neckCases = casesArray.map((caseNum, index) => {
+    const id = `case-${caseNum}-${index}`;
     return (
       <div id={id} key={id} className="flex md:flex-col">
         {strings.map((stringNum) => (
           <GridCell
-            id={`cell-${stringNum}-${caseNum}`}
-            key={`${stringNum}-${caseNum}`}
+            id={`cell-${stringNum}-${caseNum}-${index}`}
+            key={`${stringNum}-${caseNum}-${index}`}
             caseNumber={caseNum}
             string={stringNum}
             onAddNote={handleAddNote}
