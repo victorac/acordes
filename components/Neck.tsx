@@ -117,7 +117,7 @@ const Neck: React.FC = () => {
     const target = e.target as HTMLDivElement;
 
     const updateCasesArray = () => {
-      setCasesArray((prev) => [...prev.slice(6), ...prev.slice(0, 6)]);
+      setCasesArray((prev) => [...prev.slice(12), ...prev.slice(0, 12)]);
     };
 
     if (isSmallScreen) {
@@ -131,7 +131,7 @@ const Neck: React.FC = () => {
         updateCasesArray();
         // scroll up 6 cells + five gaps between cells
         target.scrollTo({
-          top: target.scrollTop - MIN_SCROLL_THRESHOLD * 6 - 5 * 8,
+          top: target.scrollTop - MIN_SCROLL_THRESHOLD * 12 - 11 * 8,
         });
       }
       if (isAtTop)
@@ -145,7 +145,7 @@ const Neck: React.FC = () => {
       if (isNearRight) {
         // remove first 6 cells and add them to the end
         target.scrollTo({
-          left: target.scrollLeft - MIN_SCROLL_THRESHOLD * 6 - 5 * 8,
+          left: target.scrollLeft - MIN_SCROLL_THRESHOLD * 12 - 11 * 8,
         });
         // scroll left 6 cells + five gaps between cells
         updateCasesArray();
