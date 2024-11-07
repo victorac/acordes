@@ -237,7 +237,7 @@ const Neck: React.FC = () => {
           md:overflow-y-hidden
           "
       >
-        <Fret />
+        <Fret tunning={tunning} keyName={key} />
         <div
           className="
           flex flex-col items-center

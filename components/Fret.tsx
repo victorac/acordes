@@ -1,6 +1,10 @@
 import React from "react";
 
-const FretItem: React.FC = () => {
+interface FretItemProps {
+  interval: string;
+}
+
+const FretItem: React.FC<FretItemProps> = ({ interval }) => {
   return (
     <div
       className="
@@ -14,12 +18,61 @@ const FretItem: React.FC = () => {
       leading-5 
       font-semibold"
     >
-      R
+      {interval}
     </div>
   );
 };
 
-const Fret: React.FC = () => {
+function getNoteData(
+  stringNum: number,
+  tunning: { [key: number]: string },
+  key = "E"
+) {
+  const allNotes = [
+    "A",
+    "A#",
+    "B",
+    "C",
+    "C#",
+    "D",
+    "D#",
+    "E",
+    "F",
+    "F#",
+    "G",
+    "G#",
+  ];
+  const intervalToStringMap: { [key: number]: string } = {
+    0: "R",
+    1: "m2",
+    2: "2",
+    3: "m3",
+    4: "3",
+    5: "P4",
+    6: "Aug4",
+    7: "5",
+    8: "m6",
+    9: "6",
+    10: "7",
+    11: "M7",
+  };
+
+  const stringTunnig = tunning[stringNum];
+  const startIndex = allNotes.findIndex((note) => note === stringTunnig);
+  const noteIndex = (startIndex) % allNotes.length;
+  const keyIndex = allNotes.findIndex((note) => note === key);
+  const interval = (noteIndex - keyIndex + allNotes.length) % allNotes.length;
+  return {
+    interval: intervalToStringMap[interval],
+  };
+}
+
+interface FretProps {
+  keyName: string;
+  tunning: { [key: number]: string };
+}
+
+const Fret: React.FC<FretProps> = ({ keyName, tunning }) => {
   return (
     <div
       className="
@@ -37,9 +90,10 @@ const Fret: React.FC = () => {
     z-[2000]
     "
     >
-      {Array.from({ length: 6 }).map((_, i) => (
-        <FretItem key={i} />
-      ))}
+      {Array.from({ length: 6 }).map((_, i) => {
+        const { interval } = getNoteData(6 - i, tunning, keyName);
+        return <FretItem key={i} interval={interval} />;
+      })}
     </div>
   );
 };
