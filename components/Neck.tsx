@@ -228,18 +228,29 @@ const Neck: React.FC = () => {
       <div
         onScroll={handleScroll}
         className="
-          container mx-auto
+          container mx-auto my-2
           flex flex-col items-center
+          md:flex-row
+          h-full relative flex-1
           overflow-y-auto
           md:overflow-x-auto
-          md:flex-row
-          md:justify-start
           md:overflow-y-hidden
-          my-2
-          h-full relative flex-grow gap-2"
+          "
       >
         <Fret />
-        {neckCases}
+        <div
+          className="
+          flex flex-col items-center
+          md:flex-row
+          md:justify-start
+          mt-[8px]
+          md:mt-0
+          md:ml-[8px]
+          gap-2
+        "
+        >
+          {neckCases}
+        </div>
       </div>
     </DndContext>
   );

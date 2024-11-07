@@ -21,9 +21,8 @@ const FretItem: React.FC = () => {
 
 const Fret: React.FC = () => {
   return (
-    <div className="
-    h-[28px] 
-    w-fit
+    <div
+      className="
     bg-[#192149] 
     px-4 
     rounded-full 
@@ -31,8 +30,13 @@ const Fret: React.FC = () => {
     md:flex-col md:h-auto md:px-0 
     items-center 
     justify-center
-    
-    ">
+    sticky
+    top-0
+    md:top-auto
+    md:left-0
+    z-[2000]
+    "
+    >
       {Array.from({ length: 6 }).map((_, i) => (
         <FretItem key={i} />
       ))}
