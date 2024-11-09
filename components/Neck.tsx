@@ -141,7 +141,6 @@ const Neck: React.FC = () => {
         target.scrollLeft + target.clientWidth >=
         target.scrollWidth - MIN_SCROLL_THRESHOLD;
       const isAtLeft = target.scrollLeft === 0;
-
       if (isNearRight) {
         // remove first 6 cells and add them to the end
         target.scrollTo({
@@ -187,7 +186,7 @@ const Neck: React.FC = () => {
   const neckCases = casesArray.map((caseNum, index) => {
     const id = `case-${caseNum}-${index}`;
     return (
-      <div id={id} key={id} className="flex md:flex-col">
+      <div id={id} key={id} className="flex sm:flex-col">
         {strings.map((stringNum) => (
           <GridCell
             id={`cell-${stringNum}-${caseNum}-${index}`}
@@ -229,23 +228,24 @@ const Neck: React.FC = () => {
         onScroll={handleScroll}
         className="
           container mx-auto my-2
+          sm:my-0
           flex flex-col items-center
-          md:flex-row
+          sm:flex-row
           h-full relative flex-1
           overflow-y-auto
-          md:overflow-x-auto
-          md:overflow-y-hidden
+          sm:overflow-x-auto
+          sm:overflow-y-hidden
           "
       >
         <Fret tunning={tunning} keyName={key} />
         <div
           className="
           flex flex-col items-center
-          md:flex-row
-          md:justify-start
+          sm:flex-row
+          sm:justify-start
           mt-[8px]
-          md:mt-0
-          md:ml-[8px]
+          sm:mt-0
+          sm:ml-[8px]
           gap-2
         "
         >

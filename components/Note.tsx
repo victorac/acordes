@@ -30,7 +30,7 @@ const Note: React.FC<NoteProps> = ({ id, interval, noteName }) => {
   return (
     <Draggable
       id={id}
-      className="w-[44px] h-[72px] md:w-[72px] md:h-[44px] flex"
+      className="w-[44px] h-[72px] sm:w-[72px] sm:h-[44px] flex"
     >
       {/* <RiveComponent /> */}
       <div

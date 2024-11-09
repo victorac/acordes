@@ -10,8 +10,8 @@ const FretItem: React.FC<FretItemProps> = ({ interval }) => {
       className="
       flex items-center justify-center
       w-[49px]
-      md:h-[49px] 
-      md:w-[28px]
+      sm:h-[49px] 
+      sm:w-[28px]
       p-1
       text-[#D0D8FF] 
       text-[16px] 
@@ -80,13 +80,13 @@ const Fret: React.FC<FretProps> = ({ keyName, tunning }) => {
     px-4 
     rounded-full 
     flex 
-    md:flex-col md:h-auto md:px-0 
+    sm:flex-col sm:h-auto sm:px-0 
     items-center 
     justify-center
     sticky
     top-0
-    md:top-auto
-    md:left-0
+    sm:top-auto
+    sm:left-0
     z-[2000]
     "
     >

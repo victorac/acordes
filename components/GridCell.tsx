@@ -19,12 +19,12 @@ const GridCell: React.FC<GridCellProps> = ({
   onAddNote,
 }) => {
   const thicknessMap: { [key: number]: string } = {
-    1: "before:w-[1px] md:before:h-[1px]",
-    2: "before:w-[2px] md:before:h-[2px]",
-    3: "before:w-[3px] md:before:h-[3px]",
-    4: "before:w-[4px] md:before:h-[4px]",
-    5: "before:w-[5px] md:before:h-[5px]",
-    6: "before:w-[6px] md:before:h-[6px]",
+    1: "before:w-[1px] sm:before:h-[1px]",
+    2: "before:w-[2px] sm:before:h-[2px]",
+    3: "before:w-[3px] sm:before:h-[3px]",
+    4: "before:w-[4px] sm:before:h-[4px]",
+    5: "before:w-[5px] sm:before:h-[5px]",
+    6: "before:w-[6px] sm:before:h-[6px]",
   };
   return (
     <Droppable
@@ -32,8 +32,8 @@ const GridCell: React.FC<GridCellProps> = ({
       className={`
       w-[49px] 
       h-[159px] 
-      md:w-[159px] 
-      md:h-[49px] 
+      sm:w-[159px] 
+      sm:h-[49px] 
       flex 
       items-center 
       justify-center 
@@ -44,11 +44,11 @@ const GridCell: React.FC<GridCellProps> = ({
       before:bg-[#E3EFF1]
       before:left-1/2
       before:-translate-x-1/2
-      md:before:w-full
-      md:before:top-1/2
-      md:before:-translate-y-1/2
-      md:before:left-0
-      md:before:translate-x-0
+      sm:before:w-full
+      sm:before:top-1/2
+      sm:before:-translate-y-1/2
+      sm:before:left-0
+      sm:before:translate-x-0
       ${thicknessMap[string]}
       `}
     >
