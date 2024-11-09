@@ -34,10 +34,6 @@ const Note: React.FC<NoteProps> = ({ id, interval, noteName }) => {
     >
       {/* <RiveComponent /> */}
       <div
-        onTouchStart={(e) => {
-          e.preventDefault(); // Prevent default touch behavior
-          e.stopPropagation(); // Stop event from bubbling up
-        }}
         className={`
         select-none
         touch-none
