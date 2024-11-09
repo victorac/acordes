@@ -4,9 +4,7 @@ const nextConfig: NextConfig = {
   output: 'export',
   images: {
     unoptimized: true,
-  },
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/acordes' : '',
-  basePath: process.env.NODE_ENV === 'production' ? '/acordes' : '',
+  }
 };
 
 export default nextConfig;
