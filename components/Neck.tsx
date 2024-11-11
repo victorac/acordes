@@ -113,7 +113,6 @@ const Neck: React.FC = () => {
         ...prev,
         [cellId]: "dragging",
       } as NeckState;
-      console.log(newCells);
       return newCells;
     });
   }
