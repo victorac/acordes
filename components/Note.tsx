@@ -16,7 +16,6 @@ const Note: React.FC<NoteProps> = ({ id, interval, noteName, state }) => {
       id={id}
       className="w-[44px] h-[72px] sm:w-[72px] sm:h-[44px] flex"
     >
-      {/* <RiveComponent /> */}
       <div
         id={id}
         className={`

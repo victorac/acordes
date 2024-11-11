@@ -66,8 +66,11 @@ function getNoteData(
   };
 }
 
-const Neck: React.FC = () => {
-  const key = "E";
+interface NeckProps {
+  keyName: string;
+}
+
+const Neck: React.FC<NeckProps> = ({ keyName }) => {
   const tunning: { [key: number]: string } = {
     1: "E",
     2: "B",
@@ -222,7 +225,7 @@ const Neck: React.FC = () => {
                 stringNum,
                 caseNum,
                 tunning,
-                key
+                keyName
               );
               const noteId = `note-${stringNum}-${caseNum}-${index}`;
               return (
@@ -263,7 +266,7 @@ const Neck: React.FC = () => {
           sm:overflow-y-hidden
           "
       >
-        <Fret tunning={tunning} keyName={key} />
+        <Fret tunning={tunning} keyName={keyName} />
         <div
           className="
           flex flex-col items-center
