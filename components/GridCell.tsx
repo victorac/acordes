@@ -63,9 +63,6 @@ const GridCell: React.FC<GridCellProps> = ({
           +
         </button>
       )}
-      <div className="absolute top-0 left-0 w-fit text-white">
-        {caseNumber + 1}
-      </div>
     </Droppable>
   );
 };

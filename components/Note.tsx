@@ -1,32 +1,16 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import Draggable from "./Draggable";
-import { basePath } from "../config";
-import { useRive } from "@rive-app/react-canvas";
 
 interface NoteProps {
   id: string;
   interval: string;
   noteName: string;
+  state: string;
 }
 
-const Note: React.FC<NoteProps> = ({ id, interval, noteName }) => {
-  const { rive } = useRive({
-    src: `${basePath}/note-interaction-lab.riv`,
-    artboard: "NoteComponentRive",
-    stateMachines: "State Machine 1",
-    autoplay: true,
-  });
-
-  useEffect(() => {
-    if (rive) {
-      // console.log("Rive text was initially: ", rive.getTextRunValue("Run 1"));
-      // rive.setTextRunValue("Run 1", "New Text!!");
-      // console.log("Rive text is now: ", rive.getTextRunValue("Run 1"));
-    }
-  }, [rive]);
-
+const Note: React.FC<NoteProps> = ({ id, interval, noteName, state }) => {
   return (
     <Draggable
       id={id}
@@ -41,6 +25,7 @@ const Note: React.FC<NoteProps> = ({ id, interval, noteName }) => {
         w-full h-full rounded-[200px] p-1
         flex flex-col items-center justify-center
         ${interval === "R" ? "bg-[#E6FF81]" : "bg-[#E3EFF1]"}
+        ${state === "dragging" ? "animate-bounce" : ""}
       `}
       >
         <div className="text-[#141935] text-[24px] font-semibold leading-7">

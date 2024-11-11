@@ -15,7 +15,7 @@ const Draggable: React.FC<DraggableProps> = ({ children, className, id }) => {
   const style = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-        zIndex: 1000,
+        zIndex: 3000,
       }
     : { zIndex: 1000 };
 

@@ -1,8 +1,8 @@
 "use client";
-import React, { useState, useLayoutEffect, useEffect } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import Note from "./Note";
 import GridCell from "./GridCell";
-import { DragEndEvent, DragOverEvent, DragStartEvent } from "@dnd-kit/core";
+import { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
 import useScreenSize from "@/hooks/useScreenSize";
 import { restrictToFirstScrollableAncestor } from "@dnd-kit/modifiers";
 import { DndContext } from "@dnd-kit/core";
@@ -213,7 +213,7 @@ const Neck: React.FC = () => {
   const neckCases = cases.map((caseNum, index) => {
     const id = `case-${caseNum}-${index}`;
     return (
-      <div id={id} key={id} className="flex sm:flex-col">
+      <div id={id} key={id} className="flex sm:flex-col relative">
         {strings.map((stringNum) => (
           <GridCell
             id={`cell-${stringNum}-${caseNum}-${index}`}
@@ -240,11 +240,15 @@ const Neck: React.FC = () => {
                   id={noteId}
                   interval={interval}
                   noteName={noteName}
+                  state={noteStatus}
                 />
               );
             })()}
           </GridCell>
         ))}
+        <div className="absolute top-0 left-0 w-fit text-[#B3BDC7] text-xs">
+          {caseNum + 1}
+        </div>
       </div>
     );
   });
