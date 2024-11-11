@@ -8,6 +8,7 @@ interface GridCellProps {
   caseNumber: number;
   string: number;
   onAddNote: (string: number, caseNumber: number) => void;
+  noteState?: string;
   children?: React.ReactNode;
 }
 
@@ -16,6 +17,7 @@ const GridCell: React.FC<GridCellProps> = ({
   children,
   string,
   caseNumber,
+  noteState,
   onAddNote,
 }) => {
   const thicknessMap: { [key: number]: string } = {
@@ -52,14 +54,18 @@ const GridCell: React.FC<GridCellProps> = ({
       ${thicknessMap[string]}
       `}
     >
-      {children ? children : (
-      <button
-        onClick={() => onAddNote(string, caseNumber)}
-        className="w-6 h-8 rounded-full bg-[#3E4648] px-1 py-2 flex items-center justify-center z-10 text-[#E3EFF1] select-none"
-      >
-        +
-      </button>
+      {children}
+      {!noteState && (
+        <button
+          onClick={() => onAddNote(string, caseNumber)}
+          className="w-6 h-8 rounded-full bg-[#3E4648] px-1 py-2 flex items-center justify-center z-10 text-[#E3EFF1] select-none"
+        >
+          +
+        </button>
       )}
+      <div className="absolute top-0 left-0 w-fit text-white">
+        {caseNumber + 1}
+      </div>
     </Droppable>
   );
 };

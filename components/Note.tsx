@@ -12,7 +12,7 @@ interface NoteProps {
 }
 
 const Note: React.FC<NoteProps> = ({ id, interval, noteName }) => {
-  const { rive, } = useRive({
+  const { rive } = useRive({
     src: `${basePath}/note-interaction-lab.riv`,
     artboard: "NoteComponentRive",
     stateMachines: "State Machine 1",
@@ -34,6 +34,7 @@ const Note: React.FC<NoteProps> = ({ id, interval, noteName }) => {
     >
       {/* <RiveComponent /> */}
       <div
+        id={id}
         className={`
         select-none
         touch-none

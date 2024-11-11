@@ -1,8 +1,8 @@
 "use client";
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect, useEffect } from "react";
 import Note from "./Note";
 import GridCell from "./GridCell";
-import { DragOverEvent } from "@dnd-kit/core";
+import { DragEndEvent, DragOverEvent, DragStartEvent } from "@dnd-kit/core";
 import useScreenSize from "@/hooks/useScreenSize";
 import { restrictToFirstScrollableAncestor } from "@dnd-kit/modifiers";
 import { DndContext } from "@dnd-kit/core";
@@ -12,21 +12,12 @@ const CASES_WINDOW_SIZE = 24;
 // 159px is the height of a cell
 const MIN_SCROLL_THRESHOLD = 159;
 
-type NotePin = {
-  id: string;
-  parent: string | number | null;
-  string: number;
-  caseNumber: number;
+type NeckState = {
+  [key: string]: "idle" | "dragging";
 };
 
-function findNoteForCell(
-  notes: Record<string, NotePin>,
-  stringNum: number,
-  caseNum: number
-) {
-  return Object.values(notes).find(
-    (note) => note.string === stringNum && note.caseNumber === caseNum
-  );
+function findNoteForCell(neck: NeckState, stringNum: number, caseNum: number) {
+  return neck[`${stringNum}-${caseNum}`];
 }
 
 function getNoteData(
@@ -85,10 +76,12 @@ const Neck: React.FC = () => {
     5: "A",
     6: "E",
   };
-  const [notes, setNotes] = useState<Record<string, NotePin>>({});
-  // const [parent, setParent] = useState<string | number | null>("cell-6-0");
-  const [casesArray, setCasesArray] = useState(
-    Array.from({ length: CASES_WINDOW_SIZE }, (_, i) => i)
+  const [neck, setNeck] = useState<NeckState>({});
+  const [cases, setCases] = useState(
+    Array.from(
+      { length: CASES_WINDOW_SIZE * 2 },
+      (_, i) => i % CASES_WINDOW_SIZE
+    )
   );
   const [isClient, setIsClient] = useState(false);
   const isSmallScreen = useScreenSize();
@@ -98,26 +91,77 @@ const Neck: React.FC = () => {
     setIsClient(true);
   }, []);
 
-  function handleAddNote(string: number, caseNumber: number) {
-    setNotes((prev) => {
-      const id = `${Object.values(prev).length}`;
+  function handleAddNote(stringNum: number, caseNum: number) {
+    setNeck((prev) => {
+      // check if there is already a note in the cell
+      if (prev[`${stringNum}-${caseNum}`]) return prev;
+      const id = `${stringNum}-${caseNum}`;
       return {
         ...prev,
-        [id]: {
-          id,
-          parent: `cell-${string}-${caseNumber}`,
-          string,
-          caseNumber,
-        },
+        [id]: "idle",
       };
     });
+  }
+
+  function handleDragStart(event: DragStartEvent) {
+    const { active } = event;
+    const id = active.id as string;
+    const [, stringNum, caseNum] = id.split("-");
+    setNeck((prev) => {
+      const cellId = `${stringNum}-${caseNum}`;
+      const newCells = {
+        ...prev,
+        [cellId]: "dragging",
+      } as NeckState;
+      console.log(newCells);
+      return newCells;
+    });
+  }
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { over } = event;
+    const [, prevStringNum, prevCaseNum] = (event.active.id as string).split(
+      "-"
+    );
+    if (over?.id) {
+      const parent = over.id as string;
+      const [, stringNum, caseNum] = parent.split("-");
+
+      // check if there is already a note in the cell
+      if (neck[`${stringNum}-${caseNum}`]) {
+        setNeck((prev) => ({
+          ...prev,
+          [`${prevStringNum}-${prevCaseNum}`]: "idle",
+        }));
+        return;
+      }
+      setNeck((prev) => {
+        const newNeck = { ...prev };
+        delete newNeck[`${prevStringNum}-${prevCaseNum}`];
+        newNeck[`${stringNum}-${caseNum}`] = "idle";
+        return newNeck;
+      });
+    } else {
+      setNeck((prev) => ({
+        ...prev,
+        [`${prevStringNum}-${prevCaseNum}`]: "idle",
+      }));
+    }
   }
 
   function handleScroll(e: React.UIEvent<HTMLDivElement>) {
     const target = e.target as HTMLDivElement;
 
     const updateCasesArray = () => {
-      setCasesArray((prev) => [...prev.slice(12), ...prev.slice(0, 12)]);
+      setCases((prev) => [...prev.slice(12), ...prev.slice(0, 12)]);
+    };
+    const resetCasesArray = () => {
+      setCases(
+        Array.from(
+          { length: CASES_WINDOW_SIZE * 2 },
+          (_, i) => i % CASES_WINDOW_SIZE
+        )
+      );
     };
 
     if (isSmallScreen) {
@@ -127,15 +171,15 @@ const Neck: React.FC = () => {
       const isAtTop = target.scrollTop === 0;
 
       if (isNearBottom) {
-        // remove first 6 cells and add them to the end
-        updateCasesArray();
         // scroll up 6 cells + five gaps between cells
-        target.scrollTo({
-          top: target.scrollTop - MIN_SCROLL_THRESHOLD * 12 - 11 * 8,
+        requestAnimationFrame(() => {
+          target.scrollTop =
+            target.scrollTop - MIN_SCROLL_THRESHOLD * 12 - 11 * 8;
+          // remove first 6 cells and add them to the end
+          updateCasesArray();
         });
       }
-      if (isAtTop)
-        setCasesArray(Array.from({ length: CASES_WINDOW_SIZE }, (_, i) => i));
+      if (isAtTop) resetCasesArray();
     } else {
       const isNearRight =
         target.scrollLeft + target.clientWidth >=
@@ -143,34 +187,17 @@ const Neck: React.FC = () => {
       const isAtLeft = target.scrollLeft === 0;
       if (isNearRight) {
         // remove first 6 cells and add them to the end
-        target.scrollTo({
-          left: target.scrollLeft - MIN_SCROLL_THRESHOLD * 12 - 11 * 8,
+        requestAnimationFrame(() => {
+          target.scrollTo({
+            left: target.scrollLeft - MIN_SCROLL_THRESHOLD * 12 - 11 * 8,
+          });
         });
         // scroll left 6 cells + five gaps between cells
         updateCasesArray();
       }
       if (isAtLeft)
-        setCasesArray(Array.from({ length: CASES_WINDOW_SIZE }, (_, i) => i));
-    }
-  }
-
-  function handleDragEnd(event: DragOverEvent) {
-    const { over } = event;
-    if (over?.id) {
-      const parent = over.id;
-      const notePinId = event.active.id;
-      const [, stringNum, caseNum] = (parent as string).split("-");
-      const string = parseInt(stringNum);
-      const caseNumber = parseInt(caseNum);
-      setNotes((prev) => ({
-        ...prev,
-        [notePinId]: {
-          ...prev[notePinId],
-          parent,
-          string,
-          caseNumber,
-        },
-      }));
+        // reset cases array
+        resetCasesArray();
     }
   }
 
@@ -183,7 +210,7 @@ const Neck: React.FC = () => {
     );
   }
 
-  const neckCases = casesArray.map((caseNum, index) => {
+  const neckCases = cases.map((caseNum, index) => {
     const id = `case-${caseNum}-${index}`;
     return (
       <div id={id} key={id} className="flex sm:flex-col">
@@ -194,9 +221,11 @@ const Neck: React.FC = () => {
             caseNumber={caseNum}
             string={stringNum}
             onAddNote={handleAddNote}
+            noteState={neck[`${stringNum}-${caseNum}`]}
           >
             {(() => {
-              const note = findNoteForCell(notes, stringNum, caseNum);
+              const noteStatus = findNoteForCell(neck, stringNum, caseNum);
+              if (!noteStatus) return null;
               // get interval and note name based on string and case number
               const { interval, noteName } = getNoteData(
                 stringNum,
@@ -204,14 +233,15 @@ const Neck: React.FC = () => {
                 tunning,
                 key
               );
-              return note?.id ? (
+              const noteId = `note-${stringNum}-${caseNum}-${index}`;
+              return (
                 <Note
-                  key={note.id}
-                  id={note.id}
+                  key={noteId}
+                  id={noteId}
                   interval={interval}
                   noteName={noteName}
                 />
-              ) : null;
+              );
             })()}
           </GridCell>
         ))}
@@ -221,6 +251,7 @@ const Neck: React.FC = () => {
 
   return (
     <DndContext
+      onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       modifiers={[restrictToFirstScrollableAncestor]}
     >
