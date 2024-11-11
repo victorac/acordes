@@ -63,16 +63,30 @@ const ActionBar: React.FC<ActionBarProps> = ({
               <button
                 key={index}
                 className={`
-                min-w-[56px] h-[32px] rounded-[24px] p-[6px] flex items-center justify-center 
-                ${
-                  keyName === key
-                    ? "bg-[#E6FF81] text-[#1D1F2C]"
-                    : "bg-[#1D1F2C] text-[#B3BDC7]"
-                } 
-                select-none`}
+                  font-medium
+                  min-w-[56px] h-[32px] rounded-[24px] p-[6px] flex items-center justify-center gap-[2px] 
+                  ${
+                    keyName === key
+                      ? "bg-[#E6FF81] text-[#1D1F2C]"
+                      : "bg-[#1D1F2C] text-[#B3BDC7]"
+                  }  
+                  select-none
+                `}
                 onClick={() => onKeyChange(key)}
               >
-                {key}
+                {key.includes("-") ? (
+                  <>
+                    <div>{key.split("-")[0]}</div>
+                    <div
+                      className={`hidden sm:block rounded-full h-1 w-1 
+                    ${keyName === key ? "bg-[#1D1F2C]" : "bg-[#B3BDC7]"} 
+                    `}
+                    ></div>
+                    <div>{key.split("-")[1]}</div>
+                  </>
+                ) : (
+                  key
+                )}
               </button>
             ))}
           </div>
