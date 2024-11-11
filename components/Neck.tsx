@@ -79,7 +79,7 @@ const Neck: React.FC = () => {
   const [neck, setNeck] = useState<NeckState>({});
   const [cases, setCases] = useState(
     Array.from(
-      { length: CASES_WINDOW_SIZE * 2 },
+      { length: CASES_WINDOW_SIZE * 3 },
       (_, i) => i % CASES_WINDOW_SIZE
     )
   );
@@ -158,7 +158,7 @@ const Neck: React.FC = () => {
     const resetCasesArray = () => {
       setCases(
         Array.from(
-          { length: CASES_WINDOW_SIZE * 2 },
+          { length: CASES_WINDOW_SIZE * 3 },
           (_, i) => i % CASES_WINDOW_SIZE
         )
       );
@@ -171,13 +171,9 @@ const Neck: React.FC = () => {
       const isAtTop = target.scrollTop === 0;
 
       if (isNearBottom) {
-        // scroll up 6 cells + five gaps between cells
-        requestAnimationFrame(() => {
-          target.scrollTop =
-            target.scrollTop - MIN_SCROLL_THRESHOLD * 12 - 11 * 8;
-          // remove first 6 cells and add them to the end
-          updateCasesArray();
-        });
+        target.scrollTop =
+          target.scrollTop - MIN_SCROLL_THRESHOLD * 12 - 11 * 8;
+        updateCasesArray();
       }
       if (isAtTop) resetCasesArray();
     } else {
@@ -186,13 +182,9 @@ const Neck: React.FC = () => {
         target.scrollWidth - MIN_SCROLL_THRESHOLD;
       const isAtLeft = target.scrollLeft === 0;
       if (isNearRight) {
-        // remove first 6 cells and add them to the end
-        requestAnimationFrame(() => {
-          target.scrollTo({
-            left: target.scrollLeft - MIN_SCROLL_THRESHOLD * 12 - 11 * 8,
-          });
+        target.scrollTo({
+          left: target.scrollLeft - MIN_SCROLL_THRESHOLD * 12 - 11 * 8,
         });
-        // scroll left 6 cells + five gaps between cells
         updateCasesArray();
       }
       if (isAtLeft)
