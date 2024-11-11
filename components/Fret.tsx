@@ -1,7 +1,8 @@
+import { getNoteData, NeckState } from "@/utils/notes";
 import React from "react";
 
 interface FretItemProps {
-  interval: string;
+  interval?: string;
 }
 
 const FretItem: React.FC<FretItemProps> = ({ interval }) => {
@@ -18,61 +19,18 @@ const FretItem: React.FC<FretItemProps> = ({ interval }) => {
       leading-5 
       font-semibold"
     >
-      {interval}
+      {interval ? interval : (<div className="rounded-full h-1 w-1 bg-[#B3BDC7]"></div>)}
     </div>
   );
 };
 
-function getNoteData(
-  stringNum: number,
-  tunning: { [key: number]: string },
-  key = "E"
-) {
-  const allNotes = [
-    "A",
-    "A#",
-    "B",
-    "C",
-    "C#",
-    "D",
-    "D#",
-    "E",
-    "F",
-    "F#",
-    "G",
-    "G#",
-  ];
-  const intervalToStringMap: { [key: number]: string } = {
-    0: "R",
-    1: "m2",
-    2: "2",
-    3: "m3",
-    4: "3",
-    5: "P4",
-    6: "Aug4",
-    7: "5",
-    8: "m6",
-    9: "6",
-    10: "7",
-    11: "M7",
-  };
-
-  const stringTunnig = tunning[stringNum];
-  const startIndex = allNotes.findIndex((note) => note === stringTunnig);
-  const noteIndex = (startIndex) % allNotes.length;
-  const keyIndex = allNotes.findIndex((note) => note === key);
-  const interval = (noteIndex - keyIndex + allNotes.length) % allNotes.length;
-  return {
-    interval: intervalToStringMap[interval],
-  };
-}
-
 interface FretProps {
   keyName: string;
+  neckIntervals: NeckState;
   tunning: { [key: number]: string };
 }
 
-const Fret: React.FC<FretProps> = ({ keyName, tunning }) => {
+const Fret: React.FC<FretProps> = ({ keyName, neckIntervals, tunning }) => {
   return (
     <div
       className="
@@ -91,8 +49,11 @@ const Fret: React.FC<FretProps> = ({ keyName, tunning }) => {
     "
     >
       {Array.from({ length: 6 }).map((_, i) => {
-        const { interval } = getNoteData(6 - i, tunning, keyName);
-        return <FretItem key={i} interval={interval} />;
+        if (neckIntervals[`${6-i}-0`]) {
+          const { interval } = getNoteData(6 - i, 0, tunning, keyName);
+          return <FretItem key={i} interval={interval} />;
+        }
+        return <FretItem key={i} />;
       })}
     </div>
   );

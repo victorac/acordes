@@ -7,83 +7,33 @@ import useScreenSize from "@/hooks/useScreenSize";
 import { restrictToFirstScrollableAncestor } from "@dnd-kit/modifiers";
 import { DndContext } from "@dnd-kit/core";
 import Fret from "./Fret";
+import { getNoteData, NeckState } from "@/utils/notes";
 
 const CASES_WINDOW_SIZE = 24;
 // 159px is the height of a cell
 const MIN_SCROLL_THRESHOLD = 159;
 
-type NeckState = {
-  [key: string]: "idle" | "dragging";
-};
-
 function findNoteForCell(neck: NeckState, stringNum: number, caseNum: number) {
   return neck[`${stringNum}-${caseNum}`];
 }
 
-function getNoteData(
-  stringNum: number,
-  caseNum: number,
-  tunning: { [key: number]: string },
-  key = "E"
-) {
-  const allNotes = [
-    "A",
-    "A#",
-    "B",
-    "C",
-    "C#",
-    "D",
-    "D#",
-    "E",
-    "F",
-    "F#",
-    "G",
-    "G#",
-  ];
-  const intervalToStringMap: { [key: number]: string } = {
-    0: "R",
-    1: "m2",
-    2: "2",
-    3: "m3",
-    4: "3",
-    5: "P4",
-    6: "Aug4",
-    7: "5",
-    8: "m6",
-    9: "6",
-    10: "7",
-    11: "M7",
-  };
-
-  const stringTunnig = tunning[stringNum];
-  const startIndex = allNotes.findIndex((note) => note === stringTunnig);
-  const noteIndex = (startIndex + caseNum + 1) % allNotes.length;
-  const keyIndex = allNotes.findIndex((note) => note === key);
-  const interval = (noteIndex - keyIndex + allNotes.length) % allNotes.length;
-  return {
-    interval: intervalToStringMap[interval],
-    noteName: allNotes[noteIndex],
-  };
-}
-
 interface NeckProps {
   keyName: string;
+  neckIntervals: NeckState;
+  setNeckIntervals: React.Dispatch<React.SetStateAction<NeckState>>;
+  tunning: { [key: number]: string };
 }
 
-const Neck: React.FC<NeckProps> = ({ keyName }) => {
-  const tunning: { [key: number]: string } = {
-    1: "E",
-    2: "B",
-    3: "G",
-    4: "D",
-    5: "A",
-    6: "E",
-  };
-  const [neck, setNeck] = useState<NeckState>({});
+const Neck: React.FC<NeckProps> = ({
+  keyName,
+  neckIntervals,
+  setNeckIntervals,
+  tunning,
+}) => {
   const [cases, setCases] = useState(
     Array.from(
       { length: CASES_WINDOW_SIZE * 3 },
-      (_, i) => i % CASES_WINDOW_SIZE
+      (_, i) => (i % CASES_WINDOW_SIZE) + 1
     )
   );
   const [isClient, setIsClient] = useState(false);
@@ -95,7 +45,7 @@ const Neck: React.FC<NeckProps> = ({ keyName }) => {
   }, []);
 
   function handleAddNote(stringNum: number, caseNum: number) {
-    setNeck((prev) => {
+    setNeckIntervals((prev) => {
       // check if there is already a note in the cell
       if (prev[`${stringNum}-${caseNum}`]) return prev;
       const id = `${stringNum}-${caseNum}`;
@@ -110,7 +60,7 @@ const Neck: React.FC<NeckProps> = ({ keyName }) => {
     const { active } = event;
     const id = active.id as string;
     const [, stringNum, caseNum] = id.split("-");
-    setNeck((prev) => {
+    setNeckIntervals((prev) => {
       const cellId = `${stringNum}-${caseNum}`;
       const newCells = {
         ...prev,
@@ -130,21 +80,21 @@ const Neck: React.FC<NeckProps> = ({ keyName }) => {
       const [, stringNum, caseNum] = parent.split("-");
 
       // check if there is already a note in the cell
-      if (neck[`${stringNum}-${caseNum}`]) {
-        setNeck((prev) => ({
+      if (neckIntervals[`${stringNum}-${caseNum}`]) {
+        setNeckIntervals((prev) => ({
           ...prev,
           [`${prevStringNum}-${prevCaseNum}`]: "idle",
         }));
         return;
       }
-      setNeck((prev) => {
+      setNeckIntervals((prev) => {
         const newNeck = { ...prev };
         delete newNeck[`${prevStringNum}-${prevCaseNum}`];
         newNeck[`${stringNum}-${caseNum}`] = "idle";
         return newNeck;
       });
     } else {
-      setNeck((prev) => ({
+      setNeckIntervals((prev) => ({
         ...prev,
         [`${prevStringNum}-${prevCaseNum}`]: "idle",
       }));
@@ -161,7 +111,7 @@ const Neck: React.FC<NeckProps> = ({ keyName }) => {
       setCases(
         Array.from(
           { length: CASES_WINDOW_SIZE * 3 },
-          (_, i) => i % CASES_WINDOW_SIZE
+          (_, i) => (i % CASES_WINDOW_SIZE) + 1
         )
       );
     };
@@ -215,10 +165,14 @@ const Neck: React.FC<NeckProps> = ({ keyName }) => {
             caseNumber={caseNum}
             string={stringNum}
             onAddNote={handleAddNote}
-            noteState={neck[`${stringNum}-${caseNum}`]}
+            noteState={neckIntervals[`${stringNum}-${caseNum}`]}
           >
             {(() => {
-              const noteStatus = findNoteForCell(neck, stringNum, caseNum);
+              const noteStatus = findNoteForCell(
+                neckIntervals,
+                stringNum,
+                caseNum
+              );
               if (!noteStatus) return null;
               // get interval and note name based on string and case number
               const { interval, noteName } = getNoteData(
@@ -241,7 +195,7 @@ const Neck: React.FC<NeckProps> = ({ keyName }) => {
           </GridCell>
         ))}
         <div className="absolute top-0 left-0 w-fit text-[#B3BDC7] text-xs">
-          {caseNum + 1}
+          {caseNum}
         </div>
       </div>
     );
@@ -266,7 +220,7 @@ const Neck: React.FC<NeckProps> = ({ keyName }) => {
           sm:overflow-y-hidden
           "
       >
-        <Fret tunning={tunning} keyName={keyName} />
+        <Fret tunning={tunning} keyName={keyName} neckIntervals={neckIntervals} />
         <div
           className="
           flex flex-col items-center

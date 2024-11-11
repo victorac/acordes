@@ -49,7 +49,7 @@ const ActionBar: React.FC<ActionBarProps> = ({
       )}
       {keyChangeMode && (
         <div className="min-w-0 flex-shrink w-full relative">
-          <div className="absolute w-[33px] h-full left-0 top-0 bg-gradient-to-r from-[#101013]"></div>
+          <div className="pointer-events-none absolute w-[33px] h-full left-0 top-0 bg-gradient-to-r from-[#101013]"></div>
           <div className="flex overflow-x-auto font-medium">
             <div
               className={`
@@ -80,9 +80,10 @@ const ActionBar: React.FC<ActionBarProps> = ({
         </div>
       )}
       <button
-        className="min-w-fit flex-shrink w-fit h-8 py-[6px] px-3 rounded-[100px] bg-[#1D1F2C] text-[#B3BDC7] ml-auto"
+        className="min-w-fit flex-shrink flex items-center gap-1 w-fit h-8 py-[6px] px-3 rounded-[100px] bg-[#1D1F2C] text-[#B3BDC7] ml-auto select-none"
         onClick={onEditModeChange}
       >
+        {editMode && <img src="/CloseNoteContainerWhite.svg" alt="Close" />}
         Edit mode
       </button>
     </div>

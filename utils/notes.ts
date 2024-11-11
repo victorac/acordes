@@ -1,0 +1,74 @@
+const allNotes = [
+  "C",
+  "C#-Db",
+  "D",
+  "D#-Eb",
+  "E",
+  "F",
+  "F#-Gb",
+  "G",
+  "G#-Ab",
+  "A",
+  "A#-Bb",
+  "B",
+];
+
+const intervalToStringMap: { [key: number]: string } = {
+  0: "R",
+  1: "m2",
+  2: "2",
+  3: "m3",
+  4: "3",
+  5: "P4",
+  6: "Aug4",
+  7: "5",
+  8: "m6",
+  9: "6",
+  10: "7",
+  11: "M7",
+};
+
+export type NeckState = {
+  [key: string]: "idle" | "dragging";
+};
+
+export function findInitialIntervals(
+  intervals: string[],
+  key: string,
+  tunning: { [key: number]: string }
+) {
+  let initialNeck: NeckState = {};
+
+  for (let stringNum = 1; stringNum <= 6; stringNum++) {
+    const startIndex = allNotes.findIndex(
+      (note) => note === tunning[Number(stringNum)]
+    );
+    for (let fret = 0; fret <= 24; fret++) {
+      const noteIndex = (startIndex + fret) % allNotes.length;
+      const keyIndex = allNotes.findIndex((note) => note === key);
+      const interval =
+        (noteIndex - keyIndex + allNotes.length) % allNotes.length;
+      if (intervals.includes(intervalToStringMap[interval])) {
+        initialNeck[`${stringNum}-${fret}`] = "idle";
+      }
+    }
+  }
+  return initialNeck;
+}
+
+export function getNoteData(
+  stringNum: number,
+  caseNum: number,
+  tunning: { [key: number]: string },
+  key = "E"
+) {
+  const stringTunnig = tunning[stringNum];
+  const startIndex = allNotes.findIndex((note) => note === stringTunnig);
+  const noteIndex = (startIndex + caseNum) % allNotes.length;
+  const keyIndex = allNotes.findIndex((note) => note === key);
+  const interval = (noteIndex - keyIndex + allNotes.length) % allNotes.length;
+  return {
+    interval: intervalToStringMap[interval],
+    noteName: allNotes[noteIndex],
+  };
+}
