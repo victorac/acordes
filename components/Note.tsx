@@ -30,10 +30,11 @@ const Note: React.FC<NoteProps> = ({ id, interval, noteName, state }) => {
         <div className="text-[#141935] text-[24px] font-semibold leading-7">
           {interval}
         </div>
-        <div className="text-[#535B86] flex flex-col justify-center items-center text-[14px] font-semibold leading-4">
+        <div className="text-[#535B86] flex flex-col sm:flex-row sm:gap-[2px] justify-center items-center text-[14px] font-semibold leading-4">
           {noteName.includes("-") ? (
             <>
               <div>{noteName.split("-")[0]}</div>
+              <div className="hidden sm:block rounded-full h-1 w-1 bg-[#535B86]"></div>
               <div>{noteName.split("-")[1]}</div>
             </>
           ) : (
