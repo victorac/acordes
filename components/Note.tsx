@@ -24,7 +24,7 @@ const Note: React.FC<NoteProps> = ({ id, interval, noteName, state }) => {
         w-full h-full rounded-[200px] p-1
         flex flex-col items-center justify-center
         ${interval === "R" ? "bg-[#E6FF81]" : "bg-[#E3EFF1]"}
-        ${state === "dragging" ? "animate-bounce" : ""}
+        ${state === "dragging" ? "" : ""}
       `}
       >
         <div className="text-[#141935] text-[24px] font-semibold leading-7">

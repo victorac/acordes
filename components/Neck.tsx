@@ -163,21 +163,6 @@ const Neck: React.FC<NeckProps> = ({
     );
   }
 
-  const neckFrets = frets.map((fretNumber, index) => {
-    return (
-      <Fret
-        key={`${fretNumber}-${index}`}
-        fretNumber={fretNumber}
-        index={index}
-        keyName={keyName}
-        tunning={tunning}
-        strings={strings}
-        onAddNote={handleAddNote}
-        neckIntervals={neckIntervals}
-      />
-    );
-  });
-
   return (
     <DndContext
       onDragStart={handleDragStart}
@@ -216,7 +201,20 @@ const Neck: React.FC<NeckProps> = ({
           gap-2
         "
         >
-          {neckFrets}
+          {frets.map((fretNumber, index) => {
+            return (
+              <Fret
+                key={`${fretNumber}-${index}`}
+                fretNumber={fretNumber}
+                index={index}
+                keyName={keyName}
+                tunning={tunning}
+                strings={strings}
+                onAddNote={handleAddNote}
+                neckIntervals={neckIntervals}
+              />
+            );
+          })}
         </div>
       </div>
     </DndContext>
