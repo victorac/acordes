@@ -5,7 +5,7 @@ interface GridCellProps {
   id: string;
   noteName?: string;
   interval?: string;
-  caseNumber: number;
+  fretNumber: number;
   string: number;
   onAddNote: (string: number, caseNumber: number) => void;
   noteState?: string;
@@ -16,7 +16,7 @@ const GridCell: React.FC<GridCellProps> = ({
   id,
   children,
   string,
-  caseNumber,
+  fretNumber,
   noteState,
   onAddNote,
 }) => {
@@ -57,7 +57,7 @@ const GridCell: React.FC<GridCellProps> = ({
       {children}
       {!noteState && (
         <button
-          onClick={() => onAddNote(string, caseNumber)}
+          onClick={() => onAddNote(string, fretNumber)}
           className="w-6 h-8 rounded-full bg-[#3E4648] px-1 py-2 flex items-center justify-center z-10 text-[#E3EFF1] select-none"
         >
           +

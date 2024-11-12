@@ -1,27 +1,22 @@
 "use client";
 import React, { useState, useLayoutEffect } from "react";
-import Note from "./Note";
-import GridCell from "./GridCell";
 import { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
 import useScreenSize from "@/hooks/useScreenSize";
 import { restrictToFirstScrollableAncestor } from "@dnd-kit/modifiers";
 import { DndContext } from "@dnd-kit/core";
-import Fret from "./Fret";
-import { getNoteData, NeckState } from "@/utils/notes";
+import { FirstFret, Fret } from "./Fret";
+import { NeckState } from "@/utils/notes";
 
 const CASES_WINDOW_SIZE = 24;
 // 159px is the height of a cell
 const MIN_SCROLL_THRESHOLD = 159;
-
-function findNoteForCell(neck: NeckState, stringNum: number, caseNum: number) {
-  return neck[`${stringNum}-${caseNum}`];
-}
 
 interface NeckProps {
   keyName: string;
   neckIntervals: NeckState;
   setNeckIntervals: React.Dispatch<React.SetStateAction<NeckState>>;
   tunning: { [key: number]: string };
+  editMode: boolean;
 }
 
 const Neck: React.FC<NeckProps> = ({
@@ -29,8 +24,9 @@ const Neck: React.FC<NeckProps> = ({
   neckIntervals,
   setNeckIntervals,
   tunning,
+  editMode,
 }) => {
-  const [cases, setCases] = useState(
+  const [frets, setFrets] = useState(
     Array.from(
       { length: CASES_WINDOW_SIZE * 3 },
       (_, i) => (i % CASES_WINDOW_SIZE) + 1
@@ -53,6 +49,19 @@ const Neck: React.FC<NeckProps> = ({
         ...prev,
         [id]: "idle",
       };
+    });
+  }
+
+  function handleNutClick(stringNum: number) {
+    setNeckIntervals((prev) => {
+      const newNeck = { ...prev };
+      const id = `${stringNum}-0`;
+      if (newNeck[id]) {
+        delete newNeck[id];
+      } else {
+        newNeck[id] = "idle";
+      }
+      return newNeck;
     });
   }
 
@@ -105,10 +114,10 @@ const Neck: React.FC<NeckProps> = ({
     const target = e.target as HTMLDivElement;
 
     const updateCasesArray = () => {
-      setCases((prev) => [...prev.slice(12), ...prev.slice(0, 12)]);
+      setFrets((prev) => [...prev.slice(12), ...prev.slice(0, 12)]);
     };
     const resetCasesArray = () => {
-      setCases(
+      setFrets(
         Array.from(
           { length: CASES_WINDOW_SIZE * 3 },
           (_, i) => (i % CASES_WINDOW_SIZE) + 1
@@ -154,50 +163,18 @@ const Neck: React.FC<NeckProps> = ({
     );
   }
 
-  const neckCases = cases.map((caseNum, index) => {
-    const id = `case-${caseNum}-${index}`;
+  const neckFrets = frets.map((fretNumber, index) => {
     return (
-      <div id={id} key={id} className="flex sm:flex-col relative">
-        {strings.map((stringNum) => (
-          <GridCell
-            id={`cell-${stringNum}-${caseNum}-${index}`}
-            key={`${stringNum}-${caseNum}-${index}`}
-            caseNumber={caseNum}
-            string={stringNum}
-            onAddNote={handleAddNote}
-            noteState={neckIntervals[`${stringNum}-${caseNum}`]}
-          >
-            {(() => {
-              const noteStatus = findNoteForCell(
-                neckIntervals,
-                stringNum,
-                caseNum
-              );
-              if (!noteStatus) return null;
-              // get interval and note name based on string and case number
-              const { interval, noteName } = getNoteData(
-                stringNum,
-                caseNum,
-                tunning,
-                keyName
-              );
-              const noteId = `note-${stringNum}-${caseNum}-${index}`;
-              return (
-                <Note
-                  key={noteId}
-                  id={noteId}
-                  interval={interval}
-                  noteName={noteName}
-                  state={noteStatus}
-                />
-              );
-            })()}
-          </GridCell>
-        ))}
-        <div className="absolute top-0 left-0 w-fit text-[#B3BDC7] text-xs">
-          {caseNum}
-        </div>
-      </div>
+      <Fret
+        key={`${fretNumber}-${index}`}
+        fretNumber={fretNumber}
+        index={index}
+        keyName={keyName}
+        tunning={tunning}
+        strings={strings}
+        onAddNote={handleAddNote}
+        neckIntervals={neckIntervals}
+      />
     );
   });
 
@@ -220,7 +197,14 @@ const Neck: React.FC<NeckProps> = ({
           sm:overflow-y-hidden
           "
       >
-        <Fret tunning={tunning} keyName={keyName} neckIntervals={neckIntervals} />
+        <FirstFret
+          tunning={tunning}
+          keyName={keyName}
+          neckIntervals={neckIntervals}
+          strings={strings}
+          editMode={editMode}
+          onNutClick={handleNutClick}
+        />
         <div
           className="
           flex flex-col items-center
@@ -232,7 +216,7 @@ const Neck: React.FC<NeckProps> = ({
           gap-2
         "
         >
-          {neckCases}
+          {neckFrets}
         </div>
       </div>
     </DndContext>

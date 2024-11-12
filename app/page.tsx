@@ -43,6 +43,7 @@ export default function Home() {
         neckIntervals={neckIntervals}
         setNeckIntervals={setNeckIntervals}
         tunning={tunning}
+        editMode={editMode}
       />
       <ActionBar
         keyName={keyName}
