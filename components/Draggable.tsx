@@ -26,11 +26,16 @@ const Draggable: React.FC<DraggableProps> = ({
       }
     : { zIndex: 1000 };
 
-  let transition: any = {
+  let transition: {
+    type: string;
+    ease?: string;
+    duration?: number;
+    delay?: number;
+  } = {
     type: "spring",
   };
   if (state === "dragging") {
-    transition = {type: "tween", ease: "easeOut", duration: 0.1, delay: 0};
+    transition = { type: "tween", ease: "easeOut", duration: 0.1, delay: 0 };
   }
 
   return (
@@ -42,7 +47,6 @@ const Draggable: React.FC<DraggableProps> = ({
       {...attributes}
       animate={{ x: transform?.x, y: transform?.y }}
       transition={transition}
-
     >
       {children}
     </motion.div>
