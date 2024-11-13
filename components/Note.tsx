@@ -8,19 +8,27 @@ interface NoteProps {
   interval: string;
   noteName: string;
   state: string;
+  stringNumber: number;
+  fretNumber: number;
+  editMode: boolean;
 }
 
-const Note: React.FC<NoteProps> = ({ id, interval, noteName, state }) => {
+const Note: React.FC<NoteProps> = ({
+  id,
+  interval,
+  noteName,
+  state,
+}) => {
+
   return (
     <Draggable
       id={id}
-      className="w-[44px] h-[72px] sm:w-[72px] sm:h-[44px] flex"
+      className="w-[44px] h-[72px] sm:w-[72px] sm:h-[44px] flex relative"
     >
       <div
         id={id}
         className={`
         select-none
-        touch-none
         w-full h-full rounded-[200px] p-1
         flex flex-col items-center justify-center
         ${interval === "R" ? "bg-[#E6FF81]" : "bg-[#E3EFF1]"}

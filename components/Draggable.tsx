@@ -21,7 +21,7 @@ const Draggable: React.FC<DraggableProps> = ({ children, className, id }) => {
 
   return (
     <div
-      className={className}
+      className={`touch-none ${className}`}
       ref={setNodeRef}
       style={style}
       {...listeners}

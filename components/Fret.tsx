@@ -4,6 +4,23 @@ import Nut from "./Nut";
 import GridCell from "./GridCell";
 import Note from "./Note";
 
+interface CloseNoteButtonProps {
+  onClick: () => void;
+}
+
+const CloseNoteButton: React.FC<CloseNoteButtonProps> = ({ onClick }) => {
+  return (
+    <button
+      onClick={onClick}
+      className="absolute top-8 -left-2 sm:-top-2 sm:left-8 w-8 h-8 flex items-center justify-center z-[5000]"
+    >
+      <div className="w-5 h-5 rounded-full bg-[#1D1F2C] ring-[1px] ring-[#79747E] flex items-center justify-center">
+        <img src="/remove_nut.svg" alt="close" />
+      </div>
+    </button>
+  );
+};
+
 interface FirstFretProps {
   keyName: string;
   neckIntervals: NeckState;
@@ -64,7 +81,9 @@ interface FretProps {
   fretNumber: number;
   strings: number[];
   index: number;
-  onAddNote: (stringNum: number, caseNum: number) => void;
+  editMode: boolean;
+  onAddNote: (stringNum: number, fretNum: number) => void;
+  onRemoveNote: (stringNum: number, fretNum: number) => void;
 }
 
 const Fret: React.FC<FretProps> = ({
@@ -74,9 +93,12 @@ const Fret: React.FC<FretProps> = ({
   fretNumber,
   index,
   strings,
+  editMode,
   onAddNote,
+  onRemoveNote,
 }) => {
   const id = `fret-${fretNumber}-${index}`;
+
   return (
     <div id={id} className="flex sm:flex-col relative">
       {strings.map((stringNum) => (
@@ -99,14 +121,29 @@ const Fret: React.FC<FretProps> = ({
               keyName
             );
             const noteId = `note-${stringNum}-${fretNumber}-${index}`;
+            function handleCloseNote() {
+              onRemoveNote(stringNum, fretNumber);
+            }
             return (
-              <Note
-                key={noteId}
-                id={noteId}
-                interval={interval}
-                noteName={noteName}
-                state={noteStatus}
-              />
+              <>
+                <Note
+                  key={noteId}
+                  id={noteId}
+                  interval={interval}
+                  noteName={noteName}
+                  state={noteStatus}
+                  stringNumber={stringNum}
+                  fretNumber={fretNumber}
+                  editMode={editMode}
+                />
+
+                {editMode && noteStatus !== "dragging" && (
+                  <CloseNoteButton
+                    key={`${noteId}-close`}
+                    onClick={handleCloseNote}
+                  />
+                )}
+              </>
             );
           })()}
         </GridCell>

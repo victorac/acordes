@@ -1,6 +1,12 @@
 "use client";
 import React, { useState, useLayoutEffect } from "react";
-import { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
+import {
+  DragEndEvent,
+  DragStartEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import useScreenSize from "@/hooks/useScreenSize";
 import { restrictToFirstScrollableAncestor } from "@dnd-kit/modifiers";
 import { DndContext } from "@dnd-kit/core";
@@ -26,6 +32,14 @@ const Neck: React.FC<NeckProps> = ({
   tunning,
   editMode,
 }) => {
+  const pointerSensor = useSensor(PointerSensor, {
+    activationConstraint: {
+      delay: 30,
+      tolerance: 5,
+    },
+  });
+  const sensors = useSensors(pointerSensor);
+
   const [frets, setFrets] = useState(
     Array.from(
       { length: CASES_WINDOW_SIZE * 3 },
@@ -34,11 +48,12 @@ const Neck: React.FC<NeckProps> = ({
   );
   const [isClient, setIsClient] = useState(false);
   const isSmallScreen = useScreenSize();
-  const strings = isSmallScreen ? [6, 5, 4, 3, 2, 1] : [1, 2, 3, 4, 5, 6];
 
   useLayoutEffect(() => {
     setIsClient(true);
   }, []);
+
+  const strings = isSmallScreen ? [6, 5, 4, 3, 2, 1] : [1, 2, 3, 4, 5, 6];
 
   function handleAddNote(stringNum: number, caseNum: number) {
     setNeckIntervals((prev) => {
@@ -49,6 +64,14 @@ const Neck: React.FC<NeckProps> = ({
         ...prev,
         [id]: "idle",
       };
+    });
+  }
+
+  function handleRemoveNote(stringNum: number, caseNum: number) {
+    setNeckIntervals((prev) => {
+      const newNeck = { ...prev };
+      delete newNeck[`${stringNum}-${caseNum}`];
+      return newNeck;
     });
   }
 
@@ -168,6 +191,7 @@ const Neck: React.FC<NeckProps> = ({
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       modifiers={[restrictToFirstScrollableAncestor]}
+      sensors={sensors}
     >
       <div
         onScroll={handleScroll}
@@ -210,7 +234,9 @@ const Neck: React.FC<NeckProps> = ({
                 keyName={keyName}
                 tunning={tunning}
                 strings={strings}
+                editMode={editMode}
                 onAddNote={handleAddNote}
+                onRemoveNote={handleRemoveNote}
                 neckIntervals={neckIntervals}
               />
             );
