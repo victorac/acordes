@@ -24,6 +24,7 @@ const Note: React.FC<NoteProps> = ({
     <Draggable
       id={id}
       className="w-[44px] h-[72px] sm:w-[72px] sm:h-[44px] flex relative"
+      state={state}
     >
       <div
         id={id}

@@ -18,23 +18,21 @@ const variants = {
 
 const CloseNoteButton: React.FC<CloseNoteButtonProps> = ({ onClick }) => {
   return (
-    <AnimatePresence mode="wait">
-      <motion.button
-        key="remove"
-        initial="initial"
-        animate="animate"
-        exit="exit"
-        variants={variants}
-        transition={{ duration: 0.2, ease: "easeInOut" }}
-        layout
-        className="absolute top-8 -left-2 sm:-top-2 sm:left-8 w-8 h-8 flex items-center justify-center z-[1000]"
-        onClick={onClick}
-      >
-        <div className="w-5 h-5 rounded-full bg-[#1D1F2C] ring-[1px] ring-[#79747E] flex items-center justify-center">
-          <img src="/remove_nut.svg" alt="close" />
-        </div>
-      </motion.button>
-    </AnimatePresence>
+    <motion.button
+      key="remove"
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      variants={variants}
+      transition={{ duration: 0.2, ease: "easeInOut" }}
+      layout
+      className="absolute top-8 -left-2 sm:-top-2 sm:left-8 w-8 h-8 flex items-center justify-center z-[1000]"
+      onClick={onClick}
+    >
+      <div className="w-5 h-5 rounded-full bg-[#1D1F2C] ring-[1px] ring-[#79747E] flex items-center justify-center">
+        <img src="/remove_nut.svg" alt="close" />
+      </div>
+    </motion.button>
   );
 };
 
@@ -154,13 +152,14 @@ const Fret: React.FC<FretProps> = ({
                   fretNumber={fretNumber}
                   editMode={editMode}
                 />
-
-                {editMode && noteStatus !== "dragging" && (
-                  <CloseNoteButton
-                    key={`${noteId}-close`}
-                    onClick={handleCloseNote}
-                  />
-                )}
+                <AnimatePresence mode="wait">
+                  {editMode && noteStatus !== "dragging" && (
+                    <CloseNoteButton
+                      key={`${noteId}-close`}
+                      onClick={handleCloseNote}
+                    />
+                  )}
+                </AnimatePresence>
               </>
             );
           })()}
