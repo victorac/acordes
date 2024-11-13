@@ -43,7 +43,7 @@ const GridCell: React.FC<GridCellProps> = ({
       before:absolute
       before:content-['']
       before:h-full
-      before:bg-[#E3EFF1]
+      ${noteState ? "before:bg-[#E3EFF1]" : "before:bg-[#3E4648]"}
       before:left-1/2
       before:-translate-x-1/2
       sm:before:w-full
