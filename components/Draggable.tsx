@@ -1,6 +1,6 @@
 import React from "react";
 import { useDraggable } from "@dnd-kit/core";
-import { AnimationProps, delay, motion } from "framer-motion";
+import { motion } from "framer-motion";
 
 interface DraggableProps {
   id: string;
