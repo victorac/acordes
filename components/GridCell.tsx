@@ -9,6 +9,7 @@ interface GridCellProps {
   string: number;
   onAddNote: (string: number, caseNumber: number) => void;
   noteState?: string;
+  editMode: boolean;
   children?: React.ReactNode;
 }
 
@@ -18,6 +19,7 @@ const GridCell: React.FC<GridCellProps> = ({
   string,
   fretNumber,
   noteState,
+  editMode,
   onAddNote,
 }) => {
   const thicknessMap: { [key: number]: string } = {
@@ -55,7 +57,7 @@ const GridCell: React.FC<GridCellProps> = ({
       `}
     >
       {children}
-      {!noteState && (
+      {!noteState && editMode && (
         <button
           onClick={() => onAddNote(string, fretNumber)}
           className="w-6 h-8 rounded-full bg-[#3E4648] px-1 py-2 flex items-center justify-center z-10 text-[#E3EFF1] select-none"

@@ -124,8 +124,9 @@ const Fret: React.FC<FretProps> = ({
           key={`${stringNum}-${fretNumber}-${index}`}
           fretNumber={fretNumber}
           string={stringNum}
-          onAddNote={onAddNote}
           noteState={neckIntervals[`${stringNum}-${fretNumber}`]}
+          editMode={editMode}
+          onAddNote={onAddNote}
         >
           {(() => {
             const noteStatus = neckIntervals[`${stringNum}-${fretNumber}`];

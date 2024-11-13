@@ -204,6 +204,7 @@ const Neck: React.FC<NeckProps> = ({
           overflow-y-auto
           sm:overflow-x-auto
           sm:overflow-y-hidden
+          custom-scrollbar
           "
       >
         <FirstFret
