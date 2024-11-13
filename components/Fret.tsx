@@ -3,21 +3,38 @@ import React from "react";
 import Nut from "./Nut";
 import GridCell from "./GridCell";
 import Note from "./Note";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface CloseNoteButtonProps {
   onClick: () => void;
 }
 
+// Animation variants
+const variants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+};
+
 const CloseNoteButton: React.FC<CloseNoteButtonProps> = ({ onClick }) => {
   return (
-    <button
-      onClick={onClick}
-      className="absolute top-8 -left-2 sm:-top-2 sm:left-8 w-8 h-8 flex items-center justify-center z-[5000]"
-    >
-      <div className="w-5 h-5 rounded-full bg-[#1D1F2C] ring-[1px] ring-[#79747E] flex items-center justify-center">
-        <img src="/remove_nut.svg" alt="close" />
-      </div>
-    </button>
+    <AnimatePresence mode="wait">
+      <motion.button
+        key="remove"
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        variants={variants}
+        transition={{ duration: 0.2, ease: "easeInOut" }}
+        layout
+        className="absolute top-8 -left-2 sm:-top-2 sm:left-8 w-8 h-8 flex items-center justify-center z-[1000]"
+        onClick={onClick}
+      >
+        <div className="w-5 h-5 rounded-full bg-[#1D1F2C] ring-[1px] ring-[#79747E] flex items-center justify-center">
+          <img src="/remove_nut.svg" alt="close" />
+        </div>
+      </motion.button>
+    </AnimatePresence>
   );
 };
 

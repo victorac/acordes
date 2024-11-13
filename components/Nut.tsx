@@ -72,17 +72,19 @@ const Nut: React.FC<NutProps> = ({
 
   if (selected) {
     editModeContent = (
-      <motion.img
-        key="selected"
-        src="selected_nut.svg"
-        alt="selected nut"
-        initial="initial"
-        animate="animate"
-        exit="exit"
-        variants={imageVariants}
-        transition={{ duration: 0.2, ease: "easeInOut" }}
-        layout
-      />
+      <AnimatePresence mode="wait">
+        <motion.img
+          key="selected"
+          src="selected_nut.svg"
+          alt="selected nut"
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          variants={imageVariants}
+          transition={{ duration: 0.2, ease: "easeInOut" }}
+          layout
+        />
+      </AnimatePresence>
     );
   }
 
