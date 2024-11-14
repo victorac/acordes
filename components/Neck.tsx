@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect, useRef, useEffect } from "react";
 import {
   DragEndEvent,
   DragStartEvent,
@@ -48,6 +48,20 @@ const Neck: React.FC<NeckProps> = ({
   );
   const [isClient, setIsClient] = useState(false);
   const isSmallScreen = useScreenSize();
+
+  const [scrollPos, setScrollPos] = useState({ x: 0, y: 0 });
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Restore scroll position after switching
+  useEffect(() => {
+    if (!scrollContainerRef.current) return;
+
+    scrollContainerRef.current.scrollTo({
+      left: scrollPos.x,
+      top: scrollPos.y,
+      behavior: "auto",
+    });
+  }, [editMode]);
 
   useLayoutEffect(() => {
     setIsClient(true);
@@ -175,6 +189,11 @@ const Neck: React.FC<NeckProps> = ({
         // reset cases array
         resetCasesArray();
     }
+    if (!scrollContainerRef.current) return;
+    setScrollPos({
+      x: scrollContainerRef.current.scrollLeft || 0,
+      y: scrollContainerRef.current.scrollTop || 0,
+    });
   }
 
   // Show loading or placeholder until client-side
@@ -195,6 +214,7 @@ const Neck: React.FC<NeckProps> = ({
       enabled={editMode}
     >
       <div
+        ref={scrollContainerRef}
         onScroll={handleScroll}
         className="
           container mx-auto my-2
