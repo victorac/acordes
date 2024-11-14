@@ -5,19 +5,39 @@ import Neck from "@/components/Neck";
 import { findInitialIntervals } from "@/utils/notes";
 import { useEffect, useState } from "react";
 
-export default function Home() {
-  const [keyName, setKeyName] = useState("E");
-  const [editMode, setEditMode] = useState(false);
-  const [keyChangeMode, setKeyChangeMode] = useState(false);
-  const [intervals, ] = useState(["R", "3", "5"]);
-  const [tunning, ] = useState({
+const DEFAULT_TUNNINGS: { [key: number]: string }[] = [
+  {
+    1: "A",
+    2: "E",
+    3: "C",
+    4: "G",
+    5: "D",
+    6: "A",
+  },
+  {
+    1: "D",
+    2: "A",
+    3: "F",
+    4: "C",
+    5: "G",
+    6: "D",
+  },
+  {
     1: "E",
     2: "B",
     3: "G",
     4: "D",
     5: "A",
     6: "E",
-  });
+  },
+];
+
+export default function Home() {
+  const [keyName, setKeyName] = useState("E");
+  const [editMode, setEditMode] = useState(false);
+  const [keyChangeMode, setKeyChangeMode] = useState(false);
+  const [intervals] = useState(["R", "3", "5"]);
+  const [tunning] = useState(DEFAULT_TUNNINGS.at(-1) as {[key:number]:string});
   const [neckIntervals, setNeckIntervals] = useState({});
 
   useEffect(() => {

@@ -35,9 +35,13 @@ const Draggable: React.FC<DraggableProps> = ({
     type: "spring",
   };
   if (state === "dragging") {
-    transition = { type: "tween", ease: "easeOut", duration: 0.1, delay: 0 };
+    transition = {
+      type: "tween",
+      ease: "easeOut",
+      duration: 0.1,
+      delay: -0.01,
+    };
   }
-
   return (
     <motion.div
       className={`touch-none ${className}`}
@@ -45,7 +49,7 @@ const Draggable: React.FC<DraggableProps> = ({
       style={{ zIndex: style.zIndex }}
       {...listeners}
       {...attributes}
-      animate={{ x: transform?.x, y: transform?.y }}
+      animate={{ x: transform?.x ?? 0, y: transform?.y ?? 0 }}
       transition={transition}
     >
       {children}
