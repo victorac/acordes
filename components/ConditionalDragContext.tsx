@@ -7,7 +7,7 @@ interface ConditionalDragContextProps {
   handleDragStart: (event: DragStartEvent) => void;
   handleDragEnd: (event: DragEndEvent) => void;
   modifiers: Modifiers;
-  sensors: SensorDescriptor<any>[];
+  sensors: SensorDescriptor<object>[];
 }
 
 // Conditional wrapper component
