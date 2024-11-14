@@ -18,6 +18,7 @@ const Note: React.FC<NoteProps> = ({
   interval,
   noteName,
   state,
+  editMode
 }) => {
 
   return (
@@ -25,6 +26,7 @@ const Note: React.FC<NoteProps> = ({
       id={id}
       className="w-[44px] h-[72px] sm:w-[72px] sm:h-[44px] flex relative"
       state={state}
+      editMode={editMode}
     >
       <div
         id={id}

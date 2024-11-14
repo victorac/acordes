@@ -9,9 +9,9 @@ import {
 } from "@dnd-kit/core";
 import useScreenSize from "@/hooks/useScreenSize";
 import { restrictToFirstScrollableAncestor } from "@dnd-kit/modifiers";
-import { DndContext } from "@dnd-kit/core";
 import { FirstFret, Fret } from "./Fret";
 import { NeckState } from "@/utils/notes";
+import ConditionalDragContext from "./ConditionalDragContext";
 
 const CASES_WINDOW_SIZE = 24;
 // 159px is the height of a cell
@@ -187,11 +187,12 @@ const Neck: React.FC<NeckProps> = ({
   }
 
   return (
-    <DndContext
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
+    <ConditionalDragContext
+      handleDragStart={handleDragStart}
+      handleDragEnd={handleDragEnd}
       modifiers={[restrictToFirstScrollableAncestor]}
       sensors={sensors}
+      enabled={editMode}
     >
       <div
         onScroll={handleScroll}
@@ -244,7 +245,7 @@ const Neck: React.FC<NeckProps> = ({
           })}
         </div>
       </div>
-    </DndContext>
+    </ConditionalDragContext>
   );
 };
 
