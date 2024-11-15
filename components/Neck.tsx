@@ -129,7 +129,7 @@ const Neck: React.FC<NeckProps> = ({
     );
     if (over?.id) {
       const parent = over.id as string;
-      const [, stringNum, fretNum, ] = parent.split("-");
+      const [, stringNum, fretNum] = parent.split("-");
 
       // check if there is already a note in the cell
       if (neckIntervals[`${stringNum}-${fretNum}`]) {
@@ -142,41 +142,26 @@ const Neck: React.FC<NeckProps> = ({
         }));
         return;
       }
+      const width = isSmallScreen ? 49 : 159;
+      const halfWidth = width / 2;
+      const height = isSmallScreen ? 159 : 49;
+      const halfHeight = height / 2;
       let deltaX = event.delta.x;
       let deltaY = event.delta.y;
-      console.log(deltaX, deltaY);
+
       const xCellsMoved =
         deltaX > 0
-          ? Math.floor((deltaX + 49 / 2) / 49)
-          : Math.ceil((deltaX - 49 / 2) / 49);
+          ? Math.floor((deltaX + halfWidth) / width)
+          : Math.ceil((deltaX - halfWidth) / width);
       const yCellsMoved =
         deltaY > 0
-          ? Math.floor((deltaY + 159 / 2) / (159 + 8))
-          : Math.ceil((deltaY - 159 / 2) / (159 + 8));
-      console.log(xCellsMoved, yCellsMoved);
-      deltaX = deltaX - xCellsMoved * 49;
-      deltaY = deltaY - yCellsMoved * (159 + 8);
-      console.log(deltaX, deltaY);
+          ? Math.floor((deltaY + halfHeight) / (height + 8))
+          : Math.ceil((deltaY - halfHeight) / (height + 8));
+
+      deltaX = deltaX - xCellsMoved * width;
+      deltaY = deltaY - yCellsMoved * (height + 8);
       const initialPosition = { x: deltaX, y: deltaY };
 
-      // // get initial position of the dragged note
-      // const xDiff = Math.abs(Number(stringNum) - Number(prevStringNum));
-      // const yDiff = Math.abs(Number(fretNum) - Number(prevFretNum));
-      // const xNormalizer = xDiff * 44;
-      // const yNormalizer = yDiff * (159 + 8);
-      // let deltaX = event.delta.x;
-      // let deltaY = event.delta.y;
-      // if(deltaX < 0) {
-      //   deltaX += xNormalizer;
-      // } else {
-      //   deltaX -= xNormalizer;
-      // }
-      // if(deltaY < 0) {
-      //   deltaY += yNormalizer;
-      // } else {
-      //   deltaY -= yNormalizer;
-      // }
-      // const initialPosition = { x: deltaX, y: deltaY };
       setNeckIntervals((prev) => {
         const newNeck = { ...prev };
         delete newNeck[`${prevStringNum}-${prevFretNum}`];
