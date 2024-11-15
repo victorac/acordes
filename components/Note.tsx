@@ -7,7 +7,7 @@ interface NoteProps {
   id: string;
   interval: string;
   noteName: string;
-  state: string;
+  state: { status: string; initialPosition: { x: number; y: number } };
   stringNumber: number;
   fretNumber: number;
   editMode: boolean;
@@ -35,7 +35,7 @@ const Note: React.FC<NoteProps> = ({
         w-full h-full rounded-[200px] p-1
         flex flex-col items-center justify-center
         ${interval === "R" ? "bg-[#E6FF81]" : "bg-[#E3EFF1]"}
-        ${state === "dragging" ? "" : ""}
+        ${state.status === "dragging" ? "" : ""}
       `}
       >
         <div className="text-[#141935] text-[24px] font-semibold leading-7">

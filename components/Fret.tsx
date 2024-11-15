@@ -122,13 +122,13 @@ const Fret: React.FC<FretProps> = ({
           key={`${stringNum}-${fretNumber}-${index}`}
           fretNumber={fretNumber}
           string={stringNum}
-          noteState={neckIntervals[`${stringNum}-${fretNumber}`]}
+          noteState={neckIntervals[`${stringNum}-${fretNumber}`]?.status}
           editMode={editMode}
           onAddNote={onAddNote}
         >
           {(() => {
-            const noteStatus = neckIntervals[`${stringNum}-${fretNumber}`];
-            if (!noteStatus) return null;
+            const noteState = neckIntervals[`${stringNum}-${fretNumber}`];
+            if (!noteState) return null;
             // get interval and note name based on string and fret number
             const { interval, noteName } = getNoteData(
               stringNum,
@@ -147,13 +147,13 @@ const Fret: React.FC<FretProps> = ({
                   id={noteId}
                   interval={interval}
                   noteName={noteName}
-                  state={noteStatus}
+                  state={noteState}
                   stringNumber={stringNum}
                   fretNumber={fretNumber}
                   editMode={editMode}
                 />
                 <AnimatePresence mode="wait">
-                  {editMode && noteStatus !== "dragging" && (
+                  {editMode && noteState.status !== "dragging" && (
                     <CloseNoteButton
                       key={`${noteId}-close`}
                       onClick={handleCloseNote}

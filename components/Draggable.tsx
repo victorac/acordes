@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 interface DraggableProps {
   id: string;
-  state: string;
+  state: {status:string, initialPosition: {x:number, y:number}};
   editMode: boolean;
   children?: React.ReactNode;
   className?: string;
@@ -43,7 +43,7 @@ const Draggable: React.FC<DraggableProps> = ({
   } = {
     type: "spring",
   };
-  if (state === "dragging") {
+  if (state.status === "dragging") {
     transition = {
       type: "tween",
       ease: "easeOut",
@@ -65,6 +65,7 @@ const Draggable: React.FC<DraggableProps> = ({
         style={{ zIndex: style.zIndex }}
         {...listeners}
         {...attributes}
+        initial={state.initialPosition}
         animate={{ x: transform?.x ?? 0, y: transform?.y ?? 0 }}
         transition={transition}
         {...dragContraintsProps}

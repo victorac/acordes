@@ -76,7 +76,10 @@ const Neck: React.FC<NeckProps> = ({
       const id = `${stringNum}-${caseNum}`;
       return {
         ...prev,
-        [id]: "idle",
+        [id]: {
+          status: "idle",
+          initialPosition: { x: 0, y: 0 },
+        },
       };
     });
   }
@@ -96,7 +99,10 @@ const Neck: React.FC<NeckProps> = ({
       if (newNeck[id]) {
         delete newNeck[id];
       } else {
-        newNeck[id] = "idle";
+        newNeck[id] = {
+          status: "idle",
+          initialPosition: { x: 0, y: 0 },
+        };
       }
       return newNeck;
     });
@@ -108,41 +114,85 @@ const Neck: React.FC<NeckProps> = ({
     const [, stringNum, caseNum] = id.split("-");
     setNeckIntervals((prev) => {
       const cellId = `${stringNum}-${caseNum}`;
-      const newCells = {
+      const newCells: NeckState = {
         ...prev,
-        [cellId]: "dragging",
-      } as NeckState;
+        [cellId]: { status: "dragging", initialPosition: { x: 0, y: 0 } },
+      };
       return newCells;
     });
   }
 
   function handleDragEnd(event: DragEndEvent) {
     const { over } = event;
-    const [, prevStringNum, prevCaseNum] = (event.active.id as string).split(
+    const [, prevStringNum, prevFretNum] = (event.active.id as string).split(
       "-"
     );
     if (over?.id) {
       const parent = over.id as string;
-      const [, stringNum, caseNum] = parent.split("-");
+      const [, stringNum, fretNum, index] = parent.split("-");
 
       // check if there is already a note in the cell
-      if (neckIntervals[`${stringNum}-${caseNum}`]) {
+      if (neckIntervals[`${stringNum}-${fretNum}`]) {
         setNeckIntervals((prev) => ({
           ...prev,
-          [`${prevStringNum}-${prevCaseNum}`]: "idle",
+          [`${prevStringNum}-${prevFretNum}`]: {
+            status: "idle",
+            initialPosition: { x: 0, y: 0 },
+          },
         }));
         return;
       }
+      let deltaX = event.delta.x;
+      let deltaY = event.delta.y;
+      console.log(deltaX, deltaY);
+      const xCellsMoved =
+        deltaX > 0
+          ? Math.floor((deltaX + 49 / 2) / 49)
+          : Math.ceil((deltaX - 49 / 2) / 49);
+      const yCellsMoved =
+        deltaY > 0
+          ? Math.floor((deltaY + 159 / 2) / (159 + 8))
+          : Math.ceil((deltaY - 159 / 2) / (159 + 8));
+      console.log(xCellsMoved, yCellsMoved);
+      deltaX = deltaX - xCellsMoved * 49;
+      deltaY = deltaY - yCellsMoved * (159 + 8);
+      console.log(deltaX, deltaY);
+      const initialPosition = { x: deltaX, y: deltaY };
+
+      // // get initial position of the dragged note
+      // const xDiff = Math.abs(Number(stringNum) - Number(prevStringNum));
+      // const yDiff = Math.abs(Number(fretNum) - Number(prevFretNum));
+      // const xNormalizer = xDiff * 44;
+      // const yNormalizer = yDiff * (159 + 8);
+      // let deltaX = event.delta.x;
+      // let deltaY = event.delta.y;
+      // if(deltaX < 0) {
+      //   deltaX += xNormalizer;
+      // } else {
+      //   deltaX -= xNormalizer;
+      // }
+      // if(deltaY < 0) {
+      //   deltaY += yNormalizer;
+      // } else {
+      //   deltaY -= yNormalizer;
+      // }
+      // const initialPosition = { x: deltaX, y: deltaY };
       setNeckIntervals((prev) => {
         const newNeck = { ...prev };
-        delete newNeck[`${prevStringNum}-${prevCaseNum}`];
-        newNeck[`${stringNum}-${caseNum}`] = "idle";
+        delete newNeck[`${prevStringNum}-${prevFretNum}`];
+        newNeck[`${stringNum}-${fretNum}`] = {
+          status: "idle",
+          initialPosition: initialPosition,
+        };
         return newNeck;
       });
     } else {
       setNeckIntervals((prev) => ({
         ...prev,
-        [`${prevStringNum}-${prevCaseNum}`]: "idle",
+        [`${prevStringNum}-${prevFretNum}`]: {
+          status: "idle",
+          initialPosition: { x: 0, y: 0 },
+        },
       }));
     }
   }

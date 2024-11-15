@@ -29,7 +29,10 @@ const intervalToStringMap: { [key: number]: string } = {
 };
 
 export type NeckState = {
-  [key: string]: "idle" | "dragging";
+  [key: string]: {
+    status: "idle" | "dragging";
+    initialPosition: { x: number; y: number };
+  };
 };
 
 export function findInitialIntervals(
@@ -49,7 +52,10 @@ export function findInitialIntervals(
       const interval =
         (noteIndex - keyIndex + allNotes.length) % allNotes.length;
       if (intervals.includes(intervalToStringMap[interval])) {
-        initialNeck[`${stringNum}-${fret}`] = "idle";
+        initialNeck[`${stringNum}-${fret}`] = {
+          status: "idle",
+          initialPosition: { x: 0, y: 0 },
+        };
       }
     }
   }
