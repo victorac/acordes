@@ -129,7 +129,7 @@ const Neck: React.FC<NeckProps> = ({
     );
     if (over?.id) {
       const parent = over.id as string;
-      const [, stringNum, fretNum, index] = parent.split("-");
+      const [, stringNum, fretNum, ] = parent.split("-");
 
       // check if there is already a note in the cell
       if (neckIntervals[`${stringNum}-${fretNum}`]) {
