@@ -2,8 +2,8 @@
 import ActionBar from "@/components/ActionBar";
 import Header from "@/components/Header";
 import Neck from "@/components/Neck";
-import { findInitialIntervals } from "@/utils/notes";
-import { useEffect, useState } from "react";
+import { findInitialIntervals, NeckState } from "@/utils/notes";
+import { useEffect, useRef, useState } from "react";
 
 const DEFAULT_TUNNINGS: { [key: number]: string }[] = [
   {
@@ -35,9 +35,12 @@ const DEFAULT_TUNNINGS: { [key: number]: string }[] = [
 export default function Home() {
   const [keyName, setKeyName] = useState("E");
   const [editMode, setEditMode] = useState(false);
+  const changeRef = useRef<string[]>([]);
   const [keyChangeMode, setKeyChangeMode] = useState(false);
   const [intervals] = useState(["R", "3", "5"]);
-  const [tunning] = useState(DEFAULT_TUNNINGS.at(-1) as {[key:number]:string});
+  const [tunning] = useState(
+    DEFAULT_TUNNINGS.at(-1) as { [key: number]: string }
+  );
   const [neckIntervals, setNeckIntervals] = useState({});
 
   useEffect(() => {
@@ -45,9 +48,31 @@ export default function Home() {
     setNeckIntervals(initialIntervals);
   }, [keyName, intervals, tunning]);
 
+  function addNoteChange(key: string) {
+    changeRef.current.push(key);
+  }
+
   function handleEditModeChange() {
     if (editMode) setKeyChangeMode(false);
     setEditMode(!editMode);
+    console.log(changeRef.current);
+    if (changeRef.current.length === 0) return;
+    setNeckIntervals((prev: NeckState) => {
+      const newIntervals = { ...prev };
+      // reset all initial positions
+      for (const key of changeRef.current) {
+        console.log(key);
+        if (!newIntervals[key]) continue;
+        console.log(newIntervals[key]);
+        newIntervals[key] = {
+          status: newIntervals[key].status,
+          initialPosition: { x: 0, y: 0 },
+        };
+        console.log(newIntervals[key]);
+      }
+      changeRef.current = [];
+      return newIntervals;
+    });
   }
   function handleKeyChangeModeChange() {
     setKeyChangeMode(!keyChangeMode);
@@ -64,6 +89,7 @@ export default function Home() {
         setNeckIntervals={setNeckIntervals}
         tunning={tunning}
         editMode={editMode}
+        onChangeNote={addNoteChange}
       />
       <ActionBar
         keyName={keyName}

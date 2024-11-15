@@ -21,6 +21,7 @@ interface NeckProps {
   keyName: string;
   neckIntervals: NeckState;
   setNeckIntervals: React.Dispatch<React.SetStateAction<NeckState>>;
+  onChangeNote: (key: string) => void;
   tunning: { [key: number]: string };
   editMode: boolean;
 }
@@ -29,6 +30,7 @@ const Neck: React.FC<NeckProps> = ({
   keyName,
   neckIntervals,
   setNeckIntervals,
+  onChangeNote,
   tunning,
   editMode,
 }) => {
@@ -171,6 +173,8 @@ const Neck: React.FC<NeckProps> = ({
         };
         return newNeck;
       });
+
+      onChangeNote(`${stringNum}-${fretNum}`);
     } else {
       setNeckIntervals((prev) => ({
         ...prev,
