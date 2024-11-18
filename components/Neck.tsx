@@ -188,41 +188,27 @@ const Neck: React.FC<NeckProps> = ({
     const updateCasesArray = () => {
       setFrets((prev) => [...prev.slice(12), ...prev.slice(0, 12)]);
     };
-    const resetCasesArray = () => {
-      setFrets(
-        Array.from(
-          { length: CASES_WINDOW_SIZE * 3 },
-          (_, i) => (i % CASES_WINDOW_SIZE) + 1
-        )
-      );
-    };
 
     if (isSmallScreen) {
       const isNearBottom =
         target.scrollTop + target.clientHeight >=
         target.scrollHeight - MIN_SCROLL_THRESHOLD;
-      const isAtTop = target.scrollTop === 0;
-
       if (isNearBottom) {
+        console.log("is near bottom");
         target.scrollTop =
           target.scrollTop - MIN_SCROLL_THRESHOLD * 12 - 11 * 8;
         updateCasesArray();
       }
-      if (isAtTop) resetCasesArray();
     } else {
       const isNearRight =
         target.scrollLeft + target.clientWidth >=
         target.scrollWidth - MIN_SCROLL_THRESHOLD;
-      const isAtLeft = target.scrollLeft === 0;
       if (isNearRight) {
         target.scrollTo({
           left: target.scrollLeft - MIN_SCROLL_THRESHOLD * 12 - 11 * 8,
         });
         updateCasesArray();
       }
-      if (isAtLeft)
-        // reset cases array
-        resetCasesArray();
     }
     if (!scrollContainerRef.current) return;
     setScrollPos({

@@ -1,9 +1,12 @@
+"use client";
+
 import { getNoteData, NeckState } from "@/utils/notes";
 import React from "react";
 import Nut from "./Nut";
 import GridCell from "./GridCell";
 import Note from "./Note";
 import { AnimatePresence, motion } from "framer-motion";
+import { useIsVisible } from "@/hooks/useIsVisible";
 
 interface CloseNoteButtonProps {
   onClick: () => void;
@@ -113,61 +116,74 @@ const Fret: React.FC<FretProps> = ({
   onRemoveNote,
 }) => {
   const id = `fret-${fretNumber}-${index}`;
+  const [fretRef, isVisible] = useIsVisible<HTMLDivElement>();
 
   return (
-    <div id={id} className="flex sm:flex-col relative">
-      {strings.map((stringNum) => (
-        <GridCell
-          id={`cell-${stringNum}-${fretNumber}-${index}`}
-          key={`${stringNum}-${fretNumber}-${index}`}
-          fretNumber={fretNumber}
-          string={stringNum}
-          noteState={neckIntervals[`${stringNum}-${fretNumber}`]?.status}
-          editMode={editMode}
-          onAddNote={onAddNote}
-        >
-          {(() => {
-            const noteState = neckIntervals[`${stringNum}-${fretNumber}`];
-            if (!noteState) return null;
-            // get interval and note name based on string and fret number
-            const { interval, noteName } = getNoteData(
-              stringNum,
-              fretNumber,
-              tunning,
-              keyName
-            );
-            const noteId = `note-${stringNum}-${fretNumber}-${index}`;
-            function handleCloseNote() {
-              onRemoveNote(stringNum, fretNumber);
-            }
-            return (
-              <>
-                <Note
-                  key={noteId}
-                  id={noteId}
-                  interval={interval}
-                  noteName={noteName}
-                  state={noteState}
-                  stringNumber={stringNum}
-                  fretNumber={fretNumber}
-                  editMode={editMode}
-                />
-                <AnimatePresence mode="wait">
-                  {editMode && noteState.status !== "dragging" && (
-                    <CloseNoteButton
-                      key={`${noteId}-close`}
-                      onClick={handleCloseNote}
-                    />
-                  )}
-                </AnimatePresence>
-              </>
-            );
-          })()}
-        </GridCell>
-      ))}
-      <div className="absolute top-0 left-0 w-fit text-[#B3BDC7] text-xs">
-        {fretNumber}
-      </div>
+    <div
+      id={id}
+      ref={fretRef}
+      className="flex sm:flex-col relative 
+      h-[159px] 
+      w-[calc(49px*6)]
+      sm:w-[159px] 
+      sm:h-[calc(49px*6)]
+      "
+    >
+      {isVisible &&
+        strings.map((stringNum) => (
+          <GridCell
+            id={`cell-${stringNum}-${fretNumber}-${index}`}
+            key={`${stringNum}-${fretNumber}-${index}`}
+            fretNumber={fretNumber}
+            string={stringNum}
+            noteState={neckIntervals[`${stringNum}-${fretNumber}`]?.status}
+            editMode={editMode}
+            onAddNote={onAddNote}
+          >
+            {(() => {
+              const noteState = neckIntervals[`${stringNum}-${fretNumber}`];
+              if (!noteState) return null;
+              // get interval and note name based on string and fret number
+              const { interval, noteName } = getNoteData(
+                stringNum,
+                fretNumber,
+                tunning,
+                keyName
+              );
+              const noteId = `note-${stringNum}-${fretNumber}-${index}`;
+              function handleCloseNote() {
+                onRemoveNote(stringNum, fretNumber);
+              }
+              return (
+                <>
+                  <Note
+                    key={noteId}
+                    id={noteId}
+                    interval={interval}
+                    noteName={noteName}
+                    state={noteState}
+                    stringNumber={stringNum}
+                    fretNumber={fretNumber}
+                    editMode={editMode}
+                  />
+                  <AnimatePresence mode="wait">
+                    {editMode && noteState.status !== "dragging" && (
+                      <CloseNoteButton
+                        key={`${noteId}-close`}
+                        onClick={handleCloseNote}
+                      />
+                    )}
+                  </AnimatePresence>
+                </>
+              );
+            })()}
+          </GridCell>
+        ))}
+      {isVisible && (
+        <div className="absolute top-0 left-0 w-fit text-[#B3BDC7] text-xs">
+          {fretNumber}
+        </div>
+      )}
     </div>
   );
 };
