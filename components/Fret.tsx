@@ -117,6 +117,13 @@ const Fret: React.FC<FretProps> = ({
 }) => {
   const id = `fret-${fretNumber}-${index}`;
   const [fretRef, isVisible] = useIsVisible<HTMLDivElement>();
+  let hasDraggingNoteInFret = false
+  for (let i = 0; i < strings.length; i++) {
+    if (neckIntervals[`${strings[i]}-${fretNumber}`]?.status === "dragging") {
+      hasDraggingNoteInFret = true
+      break
+    }
+  }
 
   return (
     <div
@@ -129,7 +136,7 @@ const Fret: React.FC<FretProps> = ({
       sm:h-[calc(49px*6)]
       "
     >
-      {isVisible &&
+      {(isVisible || hasDraggingNoteInFret) &&
         strings.map((stringNum) => (
           <GridCell
             id={`cell-${stringNum}-${fretNumber}-${index}`}
