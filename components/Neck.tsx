@@ -49,7 +49,7 @@ const Neck: React.FC<NeckProps> = ({
   const [isClient, setIsClient] = useState(false);
   const isSmallScreen = useScreenSize();
 
-  const [scrollPos, setScrollPos] = useState({ x: 0, y: 0 });
+  const scrollPosRef = useRef({ x: 0, y: 0 });
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Restore scroll position after switching
@@ -57,8 +57,8 @@ const Neck: React.FC<NeckProps> = ({
     if (!scrollContainerRef.current) return;
 
     scrollContainerRef.current.scrollTo({
-      left: scrollPos.x,
-      top: scrollPos.y,
+      left: scrollPosRef.current.x,
+      top: scrollPosRef.current.y,
       behavior: "auto",
     });
   }, [editMode]);
@@ -211,10 +211,10 @@ const Neck: React.FC<NeckProps> = ({
       }
     }
     if (!scrollContainerRef.current) return;
-    setScrollPos({
+    scrollPosRef.current = {
       x: scrollContainerRef.current.scrollLeft || 0,
       y: scrollContainerRef.current.scrollTop || 0,
-    });
+    };
   }
 
   // Show loading or placeholder until client-side
