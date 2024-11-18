@@ -79,7 +79,7 @@ const ActionBar: React.FC<ActionBarProps> = ({
                   <>
                     <div>{key.split("-")[0]}</div>
                     <div
-                      className={`hidden sm:block rounded-full h-1 w-1 
+                      className={`rounded-full h-1 w-1 
                     ${keyName === key ? "bg-[#1D1F2C]" : "bg-[#B3BDC7]"} 
                     `}
                     ></div>
