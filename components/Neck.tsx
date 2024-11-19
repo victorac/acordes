@@ -13,9 +13,13 @@ import { FirstFret, Fret } from "./Fret";
 import { NeckState } from "@/utils/notes";
 import ConditionalDragContext from "./ConditionalDragContext";
 
-const CASES_WINDOW_SIZE = 24;
+const NUMBER_OF_FRETS = 24;
 // 159px is the height of a cell
-const MIN_SCROLL_THRESHOLD = 159;
+const LONG_CELL_SIZE = 159;
+const SHORT_CELL_SIZE = 49;
+const GAP = 8;
+const SCROLL_DOWN_THRESHOLD = 300; // pixels
+const SCROLL_UP_THRESHOLD = 100; // pixels
 
 interface NeckProps {
   keyName: string;
@@ -42,15 +46,18 @@ const Neck: React.FC<NeckProps> = ({
 
   const [frets, setFrets] = useState(
     Array.from(
-      { length: CASES_WINDOW_SIZE * 3 },
-      (_, i) => (i % CASES_WINDOW_SIZE) + 1
+      { length: NUMBER_OF_FRETS * 3 },
+      (_, i) => (i % NUMBER_OF_FRETS) + 1
     )
   );
   const [isClient, setIsClient] = useState(false);
   const isSmallScreen = useScreenSize();
 
+  const prevScrollPosRef = useRef({ x: 0, y: 0 });
   const scrollPosRef = useRef({ x: 0, y: 0 });
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [isScrolledDown, setIsScrolledDown] = useState(false);
+  const [isScrolledUp, setIsScrolledUp] = useState(false);
 
   // Restore scroll position after switching
   useEffect(() => {
@@ -142,9 +149,9 @@ const Neck: React.FC<NeckProps> = ({
         }));
         return;
       }
-      const width = isSmallScreen ? 49 : 159;
+      const width = isSmallScreen ? SHORT_CELL_SIZE : LONG_CELL_SIZE;
       const halfWidth = width / 2;
-      const height = isSmallScreen ? 159 : 49;
+      const height = isSmallScreen ? LONG_CELL_SIZE : SHORT_CELL_SIZE;
       const halfHeight = height / 2;
       let deltaX = event.delta.x;
       let deltaY = event.delta.y;
@@ -155,11 +162,11 @@ const Neck: React.FC<NeckProps> = ({
           : Math.ceil((deltaX - halfWidth) / width);
       const yCellsMoved =
         deltaY > 0
-          ? Math.floor((deltaY + halfHeight) / (height + 8))
-          : Math.ceil((deltaY - halfHeight) / (height + 8));
+          ? Math.floor((deltaY + halfHeight) / (height + GAP))
+          : Math.ceil((deltaY - halfHeight) / (height + GAP));
 
       deltaX = deltaX - xCellsMoved * width;
-      deltaY = deltaY - yCellsMoved * (height + 8);
+      deltaY = deltaY - yCellsMoved * (height + GAP);
       const initialPosition = { x: deltaX, y: deltaY };
 
       setNeckIntervals((prev) => {
@@ -185,36 +192,55 @@ const Neck: React.FC<NeckProps> = ({
   function handleScroll(e: React.UIEvent<HTMLDivElement>) {
     const target = e.target as HTMLDivElement;
 
-    const updateCasesArray = () => {
-      setFrets((prev) => [...prev.slice(12), ...prev.slice(0, 12)]);
+    scrollPosRef.current = {
+      x: target.scrollLeft || 0,
+      y: target.scrollTop || 0,
     };
+
+    const deltaY = target.scrollTop - prevScrollPosRef.current.y;
+    const deltaX = target.scrollLeft - prevScrollPosRef.current.x;
+
+    if (deltaY < 0 && Math.abs(deltaY) > SCROLL_UP_THRESHOLD) {
+      setIsScrolledUp(true);
+      setIsScrolledDown(false);
+      prevScrollPosRef.current.y = target.scrollTop;
+    } else if (deltaY > 0 && Math.abs(deltaY) > SCROLL_DOWN_THRESHOLD) {
+      setIsScrolledDown(true);
+      setIsScrolledUp(false);
+      prevScrollPosRef.current.y = target.scrollTop;
+    }
+
+    if (deltaX < 0 && Math.abs(deltaX) > SCROLL_UP_THRESHOLD) {
+      setIsScrolledUp(true);
+      setIsScrolledDown(false);
+      prevScrollPosRef.current.x = target.scrollLeft;
+    } else if (deltaX > 0 && Math.abs(deltaX) > SCROLL_DOWN_THRESHOLD) {
+      setIsScrolledDown(true);
+      setIsScrolledUp(false);
+      prevScrollPosRef.current.x = target.scrollLeft;
+    }
 
     if (isSmallScreen) {
       const isNearBottom =
         target.scrollTop + target.clientHeight >=
-        target.scrollHeight - MIN_SCROLL_THRESHOLD;
+        target.scrollHeight - LONG_CELL_SIZE;
       if (isNearBottom) {
-        console.log("is near bottom");
         target.scrollTop =
-          target.scrollTop - MIN_SCROLL_THRESHOLD * 12 - 11 * 8;
-        updateCasesArray();
+          target.scrollTop -
+          LONG_CELL_SIZE * NUMBER_OF_FRETS -
+          (NUMBER_OF_FRETS - 1) * GAP;
       }
     } else {
       const isNearRight =
         target.scrollLeft + target.clientWidth >=
-        target.scrollWidth - MIN_SCROLL_THRESHOLD;
+        target.scrollWidth - LONG_CELL_SIZE;
       if (isNearRight) {
-        target.scrollTo({
-          left: target.scrollLeft - MIN_SCROLL_THRESHOLD * 12 - 11 * 8,
-        });
-        updateCasesArray();
+        target.scrollLeft =
+          target.scrollLeft -
+          LONG_CELL_SIZE * NUMBER_OF_FRETS -
+          (NUMBER_OF_FRETS - 1) * GAP;
       }
     }
-    if (!scrollContainerRef.current) return;
-    scrollPosRef.current = {
-      x: scrollContainerRef.current.scrollLeft || 0,
-      y: scrollContainerRef.current.scrollTop || 0,
-    };
   }
 
   // Show loading or placeholder until client-side
