@@ -281,6 +281,8 @@ const Neck: React.FC<NeckProps> = ({
           neckIntervals={neckIntervals}
           strings={strings}
           editMode={editMode}
+          isScrolledDown={isScrolledDown}
+          isScrolledUp={isScrolledUp}
           onNutClick={handleNutClick}
         />
         <div

@@ -8,6 +8,7 @@ import GridCell from "./GridCell";
 import Note from "./Note";
 import { AnimatePresence, motion } from "framer-motion";
 import { useIsVisible } from "@/hooks/useIsVisible";
+import useScreenSize from "@/hooks/useScreenSize";
 
 interface CloseNoteButtonProps {
   onClick: () => void;
@@ -46,19 +47,35 @@ interface FirstFretProps {
   tunning: { [key: number]: string };
   strings: number[];
   editMode: boolean;
+  isScrolledDown: boolean;
+  isScrolledUp: boolean;
   onNutClick: (stringNum: number) => void;
 }
-
+const firstFretVariants = {
+  mobile: {
+    width: "auto",
+    height: 28,
+    padding: "0 16px",
+  },
+  desktop: {
+    width: 28,
+    height: "auto",
+    padding: "16px 0",
+  },
+};
 const FirstFret: React.FC<FirstFretProps> = ({
   keyName,
   neckIntervals,
   tunning,
   strings,
   editMode,
+  isScrolledDown,
+  isScrolledUp,
   onNutClick,
 }) => {
+  const isSmallScreen = useScreenSize();
   return (
-    <div
+    <motion.div
       className="
     bg-[#192149] 
     px-4 
@@ -73,6 +90,14 @@ const FirstFret: React.FC<FirstFretProps> = ({
     sm:left-0
     z-[2000]
     "
+      variants={firstFretVariants}
+      initial={isSmallScreen ? "mobile" : "desktop"}
+      animate={isSmallScreen ? "mobile" : "desktop"}
+      layout
+      transition={{
+        duration: 0.3,
+        ease: "easeInOut",
+      }}
     >
       {strings.map((s, i) => {
         let { interval } = getNoteData(s, 0, tunning, keyName);
@@ -86,10 +111,12 @@ const FirstFret: React.FC<FirstFretProps> = ({
             stringNum={s}
             onNutClick={onNutClick}
             editMode={editMode}
+            isScrolledDown={isScrolledDown}
+            isScrolledUp={isScrolledUp}
           />
         );
       })}
-    </div>
+    </motion.div>
   );
 };
 
@@ -118,11 +145,11 @@ const Fret: React.FC<FretProps> = ({
 }) => {
   const id = `fret-${fretNumber}-${index}`;
   const [fretRef, isVisible] = useIsVisible<HTMLDivElement>();
-  let hasDraggingNoteInFret = false
+  let hasDraggingNoteInFret = false;
   for (let i = 0; i < strings.length; i++) {
     if (neckIntervals[`${strings[i]}-${fretNumber}`]?.status === "dragging") {
-      hasDraggingNoteInFret = true
-      break
+      hasDraggingNoteInFret = true;
+      break;
     }
   }
 
