@@ -8,7 +8,6 @@ import GridCell from "./GridCell";
 import Note from "./Note";
 import { AnimatePresence, motion } from "framer-motion";
 import { useIsVisible } from "@/hooks/useIsVisible";
-import useScreenSize from "@/hooks/useScreenSize";
 
 interface CloseNoteButtonProps {
   onClick: () => void;
@@ -51,18 +50,7 @@ interface FirstFretProps {
   isScrolledUp: boolean;
   onNutClick: (stringNum: number) => void;
 }
-const firstFretVariants = {
-  mobile: {
-    width: "auto",
-    height: 28,
-    padding: "0 16px",
-  },
-  desktop: {
-    width: 28,
-    height: "auto",
-    padding: "16px 0",
-  },
-};
+
 const FirstFret: React.FC<FirstFretProps> = ({
   keyName,
   neckIntervals,
@@ -73,15 +61,14 @@ const FirstFret: React.FC<FirstFretProps> = ({
   isScrolledUp,
   onNutClick,
 }) => {
-  const isSmallScreen = useScreenSize();
   return (
     <motion.div
       className="
     bg-[#192149] 
-    px-4 
-    rounded-full 
-    flex 
-    sm:flex-col sm:h-auto sm:px-0 
+    rounded-full
+    px-4 sm:px-0 sm:py-4 w-[326px] sm:w-[28px] h-[28px] sm:h-[326px]
+    flex
+    sm:flex-col
     items-center 
     justify-center
     sticky
@@ -90,9 +77,6 @@ const FirstFret: React.FC<FirstFretProps> = ({
     sm:left-0
     z-[2000]
     "
-      variants={firstFretVariants}
-      initial={isSmallScreen ? "mobile" : "desktop"}
-      animate={isSmallScreen ? "mobile" : "desktop"}
       layout
       transition={{
         duration: 0.3,

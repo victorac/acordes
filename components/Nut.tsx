@@ -110,7 +110,7 @@ const Nut: React.FC<NutProps> = ({
   const isHidden = isScrolledDown && !isScrolledUp;
 
   return (
-    <div
+    <motion.div
       className={`
       flex items-center justify-center
       w-[49px]
@@ -122,13 +122,14 @@ const Nut: React.FC<NutProps> = ({
       leading-5 
       font-semibold    
       `}
+      layout
     >
       {isHidden && interval ? (
         <div className={`rounded-full h-1 w-1 bg-[#B3BDC7]`}></div>
       ) : (
         interval
       )}
-    </div>
+    </motion.div>
   );
 };
 

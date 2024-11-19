@@ -44,12 +44,11 @@ const Neck: React.FC<NeckProps> = ({
   });
   const sensors = useSensors(pointerSensor);
 
-  const [frets, setFrets] = useState(
-    Array.from(
-      { length: NUMBER_OF_FRETS * 3 },
-      (_, i) => (i % NUMBER_OF_FRETS) + 1
-    )
+  const frets = Array.from(
+    { length: NUMBER_OF_FRETS * 3 },
+    (_, i) => (i % NUMBER_OF_FRETS) + 1
   );
+
   const [isClient, setIsClient] = useState(false);
   const isSmallScreen = useScreenSize();
 
