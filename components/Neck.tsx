@@ -24,7 +24,19 @@ const SCROLL_UP_THRESHOLD = 20; // pixels
 interface NeckProps {
   keyName: string;
   neckIntervals: NeckState;
-  setNeckIntervals: React.Dispatch<React.SetStateAction<NeckState>>;
+  handleAddNote: (stringNum: number, fretNum: number) => void;
+  handleRemoveNote: (stringNum: number, fretNum: number) => void;
+  handleNutClick: (stringNum: number) => void;
+  startNoteDragging: (stringNum: number, fretNum: number) => void;
+  updateNotePosition: (
+    prevStringNum: number,
+    prevFretNum: number,
+    stringNum: number,
+    fretNum: number,
+    x: number,
+    y: number
+  ) => void;
+  resetNoteDragging: (stringNum: number, fretNum: number) => void;
   tunning: { [key: number]: string };
   editMode: boolean;
 }
@@ -32,7 +44,12 @@ interface NeckProps {
 const Neck: React.FC<NeckProps> = ({
   keyName,
   neckIntervals,
-  setNeckIntervals,
+  handleAddNote,
+  handleRemoveNote,
+  handleNutClick,
+  startNoteDragging,
+  updateNotePosition,
+  resetNoteDragging,
   tunning,
   editMode,
 }) => {
@@ -77,57 +94,11 @@ const Neck: React.FC<NeckProps> = ({
 
   const strings = isSmallScreen ? [6, 5, 4, 3, 2, 1] : [1, 2, 3, 4, 5, 6];
 
-  function handleAddNote(stringNum: number, caseNum: number) {
-    setNeckIntervals((prev) => {
-      // check if there is already a note in the cell
-      if (prev[`${stringNum}-${caseNum}`]) return prev;
-      const id = `${stringNum}-${caseNum}`;
-      return {
-        ...prev,
-        [id]: {
-          status: "idle",
-          initialPosition: { x: 0, y: 0 },
-        },
-      };
-    });
-  }
-
-  function handleRemoveNote(stringNum: number, caseNum: number) {
-    setNeckIntervals((prev) => {
-      const newNeck = { ...prev };
-      delete newNeck[`${stringNum}-${caseNum}`];
-      return newNeck;
-    });
-  }
-
-  function handleNutClick(stringNum: number) {
-    setNeckIntervals((prev) => {
-      const newNeck = { ...prev };
-      const id = `${stringNum}-0`;
-      if (newNeck[id]) {
-        delete newNeck[id];
-      } else {
-        newNeck[id] = {
-          status: "idle",
-          initialPosition: { x: 0, y: 0 },
-        };
-      }
-      return newNeck;
-    });
-  }
-
   function handleDragStart(event: DragStartEvent) {
     const { active } = event;
     const id = active.id as string;
-    const [, stringNum, caseNum] = id.split("-");
-    setNeckIntervals((prev) => {
-      const cellId = `${stringNum}-${caseNum}`;
-      const newCells: NeckState = {
-        ...prev,
-        [cellId]: { status: "dragging", initialPosition: { x: 0, y: 0 } },
-      };
-      return newCells;
-    });
+    const [, stringNum, fretNum] = id.split("-");
+    startNoteDragging(Number(stringNum), Number(fretNum));
   }
 
   function handleDragEnd(event: DragEndEvent) {
@@ -141,13 +112,7 @@ const Neck: React.FC<NeckProps> = ({
 
       // check if there is already a note in the cell
       if (neckIntervals[`${stringNum}-${fretNum}`]) {
-        setNeckIntervals((prev) => ({
-          ...prev,
-          [`${prevStringNum}-${prevFretNum}`]: {
-            status: "idle",
-            initialPosition: { x: 0, y: 0 },
-          },
-        }));
+        resetNoteDragging(Number(prevStringNum), Number(prevFretNum));
         return;
       }
       const width = isSmallScreen ? SHORT_CELL_SIZE : LONG_CELL_SIZE;
@@ -168,25 +133,17 @@ const Neck: React.FC<NeckProps> = ({
 
       deltaX = deltaX - xCellsMoved * width;
       deltaY = deltaY - yCellsMoved * (height + GAP);
-      const initialPosition = { x: deltaX, y: deltaY };
 
-      setNeckIntervals((prev) => {
-        const newNeck = { ...prev };
-        delete newNeck[`${prevStringNum}-${prevFretNum}`];
-        newNeck[`${stringNum}-${fretNum}`] = {
-          status: "idle",
-          initialPosition: initialPosition,
-        };
-        return newNeck;
-      });
+      updateNotePosition(
+        Number(prevStringNum),
+        Number(prevFretNum),
+        Number(stringNum),
+        Number(fretNum),
+        deltaX,
+        deltaY
+      );
     } else {
-      setNeckIntervals((prev) => ({
-        ...prev,
-        [`${prevStringNum}-${prevFretNum}`]: {
-          status: "idle",
-          initialPosition: { x: 0, y: 0 },
-        },
-      }));
+      resetNoteDragging(Number(prevStringNum), Number(prevFretNum));
     }
   }
 

@@ -34,7 +34,7 @@ const ActionBar: React.FC<ActionBarProps> = ({
     <div className="max-w-7xl flex items-center justify-between gap-[1px] w-full px-4 pb-4 text-[14px] leading-5">
       {editMode && !keyChangeMode && (
         <button
-          className="w-fit py-[6px] px-3 rounded-[100px] ring-1 ring-[#E6FF81] bg-[#3C3F2F] text-[#E6FF81]"
+          className="w-fit py-[6px] px-3 rounded-[100px] ring-1 ring-inset ring-[#E6FF81] bg-[#3C3F2F] text-[#E6FF81]"
           onClick={onKeyChangeModeChange}
         >
           Change key
@@ -42,7 +42,7 @@ const ActionBar: React.FC<ActionBarProps> = ({
       )}
       {editMode && keyChangeMode && (
         <button
-          className="w-[30px] h-[30px] p-[6px] shrink-0 flex items-center justify-center rounded-[100px] ring-1 ring-[#E6FF81] bg-[#3C3F2F] text-[#E6FF81]"
+          className="w-[30px] h-[30px] p-[6px] shrink-0 flex items-center justify-center rounded-[100px] ring-1 ring-inset ring-[#E6FF81] bg-[#3C3F2F] text-[#E6FF81]"
           onClick={onKeyChangeModeChange}
         >
           <img src="/CloseNoteContainer.svg" alt="Close" />
