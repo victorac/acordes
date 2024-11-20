@@ -18,8 +18,8 @@ const NUMBER_OF_FRETS = 24;
 const LONG_CELL_SIZE = 159;
 const SHORT_CELL_SIZE = 49;
 const GAP = 8;
-const SCROLL_DOWN_THRESHOLD = 300; // pixels
-const SCROLL_UP_THRESHOLD = 100; // pixels
+const SCROLL_DOWN_THRESHOLD = 150; // pixels
+const SCROLL_UP_THRESHOLD = 20; // pixels
 
 interface NeckProps {
   keyName: string;
@@ -67,6 +67,8 @@ const Neck: React.FC<NeckProps> = ({
       top: scrollPosRef.current.y,
       behavior: "auto",
     });
+    setIsScrolledDown(false);
+    setIsScrolledUp(false);
   }, [editMode]);
 
   useLayoutEffect(() => {

@@ -122,7 +122,8 @@ const Nut: React.FC<NutProps> = ({
       leading-5 
       font-semibold    
       `}
-      layout
+      transition={{ duration: 0.05, ease: "easeInOut" }}
+      layout="size"
     >
       {isHidden && interval ? (
         <div className={`rounded-full h-1 w-1 bg-[#B3BDC7]`}></div>

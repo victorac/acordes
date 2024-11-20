@@ -78,10 +78,7 @@ const FirstFret: React.FC<FirstFretProps> = ({
     z-[2000]
     "
       layout
-      transition={{
-        duration: 0.3,
-        ease: "easeInOut",
-      }}
+      transition={{ duration: 0.05, ease: "easeInOut" }}
     >
       {strings.map((s, i) => {
         let { interval } = getNoteData(s, 0, tunning, keyName);
