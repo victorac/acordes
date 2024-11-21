@@ -21,11 +21,10 @@ const Draggable: React.FC<DraggableProps> = ({
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id,
   });
-  const constraintsRef = useRef(null);
 
   const dragContraintsProps = !editMode ? {
     drag: true,
-    dragConstraints: constraintsRef,
+    dragConstraints: {left: 0, right: 0, top: 0, bottom: 0},
     dragElastic: 0.1,
     dragMomentum: false,
     dragTransition:{ bounceStiffness: 600, bounceDamping: 10 }
@@ -59,7 +58,6 @@ const Draggable: React.FC<DraggableProps> = ({
       {!editMode && (
         <motion.div
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[44px] h-[72px] sm:w-[72px] sm:h-[44px] the-container"
-          ref={constraintsRef}
         />
       )}
       <motion.div

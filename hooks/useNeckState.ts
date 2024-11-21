@@ -65,7 +65,6 @@ export function useNeckState(initialKey: string) {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    console.log("saving to local storage", neckIntervalsMap);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(neckIntervalsMap));
   }, [neckIntervalsMap]);
 
@@ -137,24 +136,19 @@ export function useNeckState(initialKey: string) {
   }
 
   function handleNutClick(stringNum: number) {
-    console.log("handleNutClick in useNeckState");
     setNeckIntervalsMap((prev) => {
       const newNeck = { ...prev, [keyName]: { ...prev[keyName] } };
       const id = `${stringNum}-0`;
       if (newNeck[keyName][id]) {
-        console.log("deleting", id);
         delete newNeck[keyName][id];
       } else {
-        console.log("adding", id);
         newNeck[keyName][id] = {
           status: "idle",
           initialPosition: { x: 0, y: 0 },
         };
       }
-      console.log("concluded with",newNeck[keyName][id]);
       return newNeck;
     });
-    console.log("handleNutClick in useNeckState concluded");
   }
 
   function startNoteDragging(stringNum: number, fretNum: number) {
