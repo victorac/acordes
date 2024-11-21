@@ -37,8 +37,9 @@ interface NeckProps {
     y: number
   ) => void;
   resetNoteDragging: (stringNum: number, fretNum: number) => void;
-  tunning: { [key: number]: string };
+  tuning: { [key: number]: string };
   editMode: boolean;
+  stringOrientation: "right" | "left";
 }
 
 const Neck: React.FC<NeckProps> = ({
@@ -50,8 +51,9 @@ const Neck: React.FC<NeckProps> = ({
   startNoteDragging,
   updateNotePosition,
   resetNoteDragging,
-  tunning,
+  tuning,
   editMode,
+  stringOrientation,
 }) => {
   const pointerSensor = useSensor(PointerSensor, {
     activationConstraint: {
@@ -92,7 +94,16 @@ const Neck: React.FC<NeckProps> = ({
     setIsClient(true);
   }, []);
 
-  const strings = isSmallScreen ? [6, 5, 4, 3, 2, 1] : [1, 2, 3, 4, 5, 6];
+  let strings = Array.from(
+    { length: Object.keys(tuning).length },
+    (_, i) => i + 1
+  );
+  if (stringOrientation === "right") {
+    strings = strings.reverse();
+  }
+  if (!isSmallScreen) {
+    strings = strings.reverse();
+  }
 
   function handleDragStart(event: DragStartEvent) {
     const { active } = event;
@@ -234,7 +245,7 @@ const Neck: React.FC<NeckProps> = ({
           "
       >
         <FirstFret
-          tunning={tunning}
+          tuning={tuning}
           keyName={keyName}
           neckIntervals={neckIntervals}
           strings={strings}
@@ -261,7 +272,7 @@ const Neck: React.FC<NeckProps> = ({
                 fretNumber={fretNumber}
                 index={index}
                 keyName={keyName}
-                tunning={tunning}
+                tuning={tuning}
                 strings={strings}
                 editMode={editMode}
                 onAddNote={handleAddNote}

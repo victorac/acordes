@@ -43,7 +43,7 @@ const CloseNoteButton: React.FC<CloseNoteButtonProps> = ({ onClick }) => {
 interface FirstFretProps {
   keyName: string;
   neckIntervals: NeckState;
-  tunning: { [key: number]: string };
+  tuning: { [key: number]: string };
   strings: number[];
   editMode: boolean;
   isScrolledDown: boolean;
@@ -54,7 +54,7 @@ interface FirstFretProps {
 const FirstFret: React.FC<FirstFretProps> = ({
   keyName,
   neckIntervals,
-  tunning,
+  tuning,
   strings,
   editMode,
   isScrolledDown,
@@ -81,7 +81,7 @@ const FirstFret: React.FC<FirstFretProps> = ({
       transition={{ duration: 0.05, ease: "easeInOut" }}
     >
       {strings.map((s, i) => {
-        let { interval } = getNoteData(s, 0, tunning, keyName);
+        let { interval } = getNoteData(s, 0, tuning, keyName);
         if (!neckIntervals[`${s}-0`]) {
           interval = "";
         }
@@ -104,7 +104,7 @@ const FirstFret: React.FC<FirstFretProps> = ({
 interface FretProps {
   keyName: string;
   neckIntervals: NeckState;
-  tunning: { [key: number]: string };
+  tuning: { [key: number]: string };
   fretNumber: number;
   strings: number[];
   index: number;
@@ -116,7 +116,7 @@ interface FretProps {
 const Fret: React.FC<FretProps> = ({
   keyName,
   neckIntervals,
-  tunning,
+  tuning,
   fretNumber,
   index,
   strings,
@@ -163,7 +163,7 @@ const Fret: React.FC<FretProps> = ({
               const { interval, noteName } = getNoteData(
                 stringNum,
                 fretNumber,
-                tunning,
+                tuning,
                 keyName
               );
               const noteId = `note-${stringNum}-${fretNumber}-${index}`;

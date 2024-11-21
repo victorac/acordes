@@ -26,6 +26,9 @@ const Draggable: React.FC<DraggableProps> = ({
   const dragContraintsProps = !editMode ? {
     drag: true,
     dragConstraints: constraintsRef,
+    dragElastic: 0.1,
+    dragMomentum: false,
+    dragTransition:{ bounceStiffness: 600, bounceDamping: 10 }
   } : {};
 
   const style = transform

@@ -38,6 +38,7 @@ const Nut: React.FC<NutProps> = ({
   }, [selected]);
 
   function handleNutClick() {
+    console.log("handleNutClick", interval, stringNum);
     if (!interval) {
       setSelected(true);
     }

@@ -1,4 +1,4 @@
-import { findInitialIntervals, NeckState } from "@/utils/notes";
+import { findInitialIntervals, NeckState, transposeNote } from "@/utils/notes";
 import { useState, useEffect } from "react";
 
 interface NeckStateMap {
@@ -6,25 +6,43 @@ interface NeckStateMap {
 }
 
 const STORAGE_KEY = "neck-intervals-map";
-const DEFAULT_TUNNINGS: { [key: number]: string }[] = [
-  {
-    1: "E",
-    2: "B",
-    3: "G",
-    4: "D",
-    5: "A",
-    6: "E",
+
+type Tuning = { [key: number]: string };
+
+const DEFAULT_TUNINGS: { [key: string]: Tuning } = {
+  four: {
+    4: "E",
+    3: "A",
+    2: "D",
+    1: "G",
   },
-];
+  five: {
+    5: "B",
+    4: "E",
+    3: "A",
+    2: "D",
+    1: "G",
+  },
+  six: {
+    6: "E",
+    5: "A",
+    4: "D",
+    3: "G",
+    2: "B",
+    1: "E",
+  },
+};
 
 export function useNeckState(initialKey: string) {
   const [keyName, setKeyName] = useState(initialKey);
   const [editMode, setEditMode] = useState(false);
   const [keyChangeMode, setKeyChangeMode] = useState(false);
   const [intervals] = useState(["R", "3", "5"]);
-  const [tunning] = useState(
-    DEFAULT_TUNNINGS.at(0) as { [key: number]: string }
+  const [stringOrientation, setStringOrientation] = useState<"right" | "left">(
+    "right"
   );
+  const [settingsMode, setSettingsMode] = useState(false);
+  const [tuning, setTuning] = useState(DEFAULT_TUNINGS.six);
   const [neckIntervalsMap, setNeckIntervalsMap] = useState<NeckStateMap>(() => {
     if (typeof window === "undefined") return {};
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -36,17 +54,18 @@ export function useNeckState(initialKey: string) {
       const initialIntervals = findInitialIntervals(
         intervals,
         keyName,
-        tunning
+        tuning
       );
       setNeckIntervalsMap((prev) => ({
         ...prev,
         [keyName]: initialIntervals,
       }));
     }
-  }, [keyName, intervals, tunning]);
+  }, [keyName, intervals, tuning]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    console.log("saving to local storage", neckIntervalsMap);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(neckIntervalsMap));
   }, [neckIntervalsMap]);
 
@@ -61,6 +80,36 @@ export function useNeckState(initialKey: string) {
 
   function handleKeyChange(key: string) {
     setKeyName(key);
+  }
+
+  function toggleStringOrientation() {
+    setStringOrientation((prev) => (prev === "right" ? "left" : "right"));
+  }
+
+  function transposeMinus(stringNum: number) {
+    setTuning((prev) => {
+      const newTuning = { ...prev };
+      const note = prev[stringNum];
+      const newNote = transposeNote(note, -1);
+      newTuning[stringNum] = newNote;
+      return newTuning;
+    });
+  }
+
+  function transposePlus(stringNum: number) {
+    setTuning((prev) => {
+      const newTuning = { ...prev };
+      const note = prev[stringNum];
+      const newNote = transposeNote(note, 1);
+      newTuning[stringNum] = newNote;
+      return newTuning;
+    });
+  }
+
+  function setNumberOfStrings(num: number) {
+    if (num === 4) setTuning(DEFAULT_TUNINGS.four);
+    if (num === 5) setTuning(DEFAULT_TUNINGS.five);
+    if (num === 6) setTuning(DEFAULT_TUNINGS.six);
   }
 
   function handleAddNote(stringNum: number, fretNum: number) {
@@ -88,19 +137,24 @@ export function useNeckState(initialKey: string) {
   }
 
   function handleNutClick(stringNum: number) {
+    console.log("handleNutClick in useNeckState");
     setNeckIntervalsMap((prev) => {
-      const newNeck = { ...prev };
+      const newNeck = { ...prev, [keyName]: { ...prev[keyName] } };
       const id = `${stringNum}-0`;
       if (newNeck[keyName][id]) {
+        console.log("deleting", id);
         delete newNeck[keyName][id];
       } else {
+        console.log("adding", id);
         newNeck[keyName][id] = {
           status: "idle",
           initialPosition: { x: 0, y: 0 },
         };
       }
+      console.log("concluded with",newNeck[keyName][id]);
       return newNeck;
     });
+    console.log("handleNutClick in useNeckState concluded");
   }
 
   function startNoteDragging(stringNum: number, fretNum: number) {
@@ -145,13 +199,20 @@ export function useNeckState(initialKey: string) {
     });
   }
 
+  function toggleSettingsMode() {
+    setSettingsMode((prev) => !prev);
+  }
+
+
   return {
     keyName,
     editMode,
     keyChangeMode,
     intervals,
-    tunning,
+    tuning,
     neckIntervals: neckIntervalsMap[keyName] || {},
+    settingsMode,
+    toggleSettingsMode,
     handleAddNote,
     handleRemoveNote,
     handleNutClick,
@@ -161,5 +222,10 @@ export function useNeckState(initialKey: string) {
     handleEditModeChange,
     handleKeyChangeModeChange,
     handleKeyChange,
+    setNumberOfStrings,
+    transposePlus,
+    transposeMinus,
+    toggleStringOrientation,
+    stringOrientation,
   };
 }

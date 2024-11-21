@@ -2,6 +2,7 @@
 import ActionBar from "@/components/ActionBar";
 import Header from "@/components/Header";
 import Neck from "@/components/Neck";
+import SettingsMenu from "@/components/SettingsMenu";
 import { useNeckState } from "@/hooks/useNeckState";
 
 export default function Home() {
@@ -9,8 +10,10 @@ export default function Home() {
     keyName,
     editMode,
     keyChangeMode,
-    tunning,
+    tuning,
     neckIntervals,
+    settingsMode,
+    toggleSettingsMode,
     handleAddNote,
     handleRemoveNote,
     handleNutClick,
@@ -20,15 +23,34 @@ export default function Home() {
     handleEditModeChange,
     handleKeyChangeModeChange,
     handleKeyChange,
+    setNumberOfStrings,
+    transposePlus,
+    transposeMinus,
+    toggleStringOrientation,
+    stringOrientation,
   } = useNeckState("E");
   return (
     <div className="flex flex-col w-full h-dvh items-center bg-[#101013]">
-      <Header />
+      <Header
+        settingsMode={settingsMode}
+        toggleSettingsMode={toggleSettingsMode}
+      />
+      <SettingsMenu
+        settingsMode={settingsMode}
+        tuning={tuning}
+        numberOfStrings={Object.keys(tuning).length}
+        setNumberOfStrings={setNumberOfStrings}
+        transposePlus={transposePlus}
+        transposeMinus={transposeMinus}
+        stringOrientation={stringOrientation}
+        toggleStringOrientation={toggleStringOrientation}
+      />
       <Neck
         keyName={keyName}
         neckIntervals={neckIntervals}
-        tunning={tunning}
+        tuning={tuning}
         editMode={editMode}
+        stringOrientation={stringOrientation}
         handleAddNote={handleAddNote}
         handleRemoveNote={handleRemoveNote}
         handleNutClick={handleNutClick}

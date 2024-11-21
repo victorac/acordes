@@ -38,13 +38,13 @@ export type NeckState = {
 export function findInitialIntervals(
   intervals: string[],
   key: string,
-  tunning: { [key: number]: string }
+  tuning: { [key: number]: string }
 ) {
   let initialNeck: NeckState = {};
 
   for (let stringNum = 1; stringNum <= 6; stringNum++) {
     const startIndex = allNotes.findIndex(
-      (note) => note === tunning[Number(stringNum)]
+      (note) => note === tuning[Number(stringNum)]
     );
     for (let fret = 0; fret <= 24; fret++) {
       const noteIndex = (startIndex + fret) % allNotes.length;
@@ -65,10 +65,10 @@ export function findInitialIntervals(
 export function getNoteData(
   stringNum: number,
   caseNum: number,
-  tunning: { [key: number]: string },
+  tuning: { [key: number]: string },
   key = "E"
 ) {
-  const stringTunnig = tunning[stringNum];
+  const stringTunnig = tuning[stringNum];
   const startIndex = allNotes.findIndex((note) => note === stringTunnig);
   const noteIndex = (startIndex + caseNum) % allNotes.length;
   const keyIndex = allNotes.findIndex((note) => note === key);
@@ -77,4 +77,10 @@ export function getNoteData(
     interval: intervalToStringMap[interval],
     noteName: allNotes[noteIndex],
   };
+}
+
+export function transposeNote(note: string, by: number) {
+  const noteIndex = allNotes.findIndex((n) => n === note);
+  const newNoteIndex = (noteIndex + by + allNotes.length) % allNotes.length;
+  return allNotes[newNoteIndex];
 }
