@@ -33,6 +33,80 @@ const downwardsCaret = (
   </svg>
 );
 
+const TransposeMenu: React.FC<{
+  tuning: { [key: number]: string };
+  numberOfStrings: number;
+  transposePlus: (stringNum: number) => void;
+  transposeMinus: (stringNum: number) => void;
+}> = ({ tuning, numberOfStrings, transposePlus, transposeMinus }) => {
+  const [customTuning] = useState(tuning);
+  let strings = Array.from(
+    { length: Object.keys(tuning).length },
+    (_, i) => i + 1
+  );
+  function transposeNeckPlus() {
+    // transpose all notes up a half step
+    for (let i = 1; i <= numberOfStrings; i++) {
+      transposePlus(i);
+    }
+  }
+  function transposeNeckMinus() {
+    // transpose all notes down a half step
+    for (let i = 1; i <= numberOfStrings; i++) {
+      transposeMinus(i);
+    }
+  }
+  return (
+    <div className="w-full flex flex-col gap-2">
+      <span className="">Transpose</span>
+      <div className="flex gap-2 leading-5 text-[#D0D8FF]">
+        <button
+          className="w-8 h-10 rounded-3xl bg-[#192149] text-[14px]"
+          onClick={transposeNeckMinus}
+        >
+          -
+        </button>
+        <div className="flex flex-1 px-1 items-center justify-evenly text-[12px]">
+          {strings.map((stringNumber) => {
+            const note = tuning[stringNumber];
+            return (
+              <div
+                key={stringNumber}
+                className="flex flex-col items-center justify-center w-full h-full"
+              >
+                {customTuning && (
+                  <button onClick={() => transposeMinus(Number(stringNumber))}>
+                    {upwardsCaret}
+                  </button>
+                )}
+                <span
+                  className="h-full 
+                    flex items-center justify-center 
+                    text-center"
+                >
+                  {note}
+                </span>
+                {customTuning && (
+                  <button onClick={() => transposePlus(Number(stringNumber))}>
+                    {downwardsCaret}
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+        <button
+          className="w-8 h-10 rounded-3xl bg-[#192149] text-[14px]"
+          onClick={transposeNeckPlus}
+        >
+          +
+        </button>
+      </div>
+      <button>Custom tuning</button>
+    </div>
+  );
+};
+
 interface SettingsMenuProps {
   tuning: { [key: number]: string };
   numberOfStrings: number;
@@ -51,23 +125,11 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
   settingsMode,
   transposePlus,
   transposeMinus,
-//   toggleStringOrientation,
-//   setNumberOfStrings,
+  //   toggleStringOrientation,
+  //   setNumberOfStrings,
 }) => {
   const isSmallScreen = useScreenSize();
-  const [customTuning, ] = useState(tuning);
-  function transposeNeckPlus() {
-    // transpose all notes up a half step
-    for (let i = 1; i <= numberOfStrings; i++) {
-      transposePlus(i);
-    }
-  }
-  function transposeNeckMinus() {
-    // transpose all notes down a half step
-    for (let i = 1; i <= numberOfStrings; i++) {
-      transposeMinus(i);
-    }
-  }
+
   let strings = Array.from(
     { length: Object.keys(tuning).length },
     (_, i) => i + 1
@@ -80,66 +142,27 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
   }
   return (
     <AnimatePresence>
-      <motion.div
-        initial={{ height: 0 }}
-        animate={settingsMode ? { height: 280 } : { height: 0 }}
-        exit={{ height: 0 }}
-        className="text-[#B3BDC7] text-[11px] leading-3 px-4 overflow-hidden w-full bg-[#181A24]"
-      >
-        <div className="flex flex-col items-center justify-center max-w-[328px] mx-auto">
-          <div className="w-full flex flex-col gap-2">
-            <span className="">Transpose</span>
-            <div className="flex gap-2 leading-5 text-[#D0D8FF]">
-              <button
-                className="w-8 h-10 rounded-3xl bg-[#192149] text-[14px]"
-                onClick={transposeNeckMinus}
-              >
-                -
-              </button>
-              <div className="flex flex-1 px-1 items-center justify-evenly text-[12px]">
-                {strings.map((stringNumber) => {
-                  const note = tuning[stringNumber];
-                  return (
-                    <div
-                      key={stringNumber}
-                      className="flex flex-col items-center justify-center w-full h-full"
-                    >
-                      {customTuning && (
-                        <button
-                          onClick={() => transposeMinus(Number(stringNumber))}
-                        >
-                          {upwardsCaret}
-                        </button>
-                      )}
-                      <span
-                        className="h-full 
-                            flex items-center justify-center 
-                            text-center"
-                      >
-                        {note}
-                      </span>
-                      {customTuning && (
-                        <button
-                          onClick={() => transposePlus(Number(stringNumber))}
-                        >
-                          {downwardsCaret}
-                        </button>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-              <button
-                className="w-8 h-10 rounded-3xl bg-[#192149] text-[14px]"
-                onClick={transposeNeckPlus}
-              >
-                +
-              </button>
-            </div>
-            <button>Custom tuning</button>
+      {settingsMode && (
+        <motion.div
+          initial={{ height: 0 }}
+          animate={
+            settingsMode
+              ? { height: 280, paddingTop: 24 }
+              : { height: 0, paddingTop: 0 }
+          }
+          exit={{ height: 0, paddingTop: 0 }}
+          className="text-[#B3BDC7] text-[11px] leading-3 px-4 overflow-hidden w-full bg-[#181A24]"
+        >
+          <div className="flex flex-col items-center justify-center max-w-[328px] mx-auto">
+            <TransposeMenu
+              tuning={tuning}
+              numberOfStrings={numberOfStrings}
+              transposeMinus={transposeMinus}
+              transposePlus={transposePlus}
+            />
           </div>
-        </div>
-      </motion.div>
+        </motion.div>
+      )}
     </AnimatePresence>
   );
 };
