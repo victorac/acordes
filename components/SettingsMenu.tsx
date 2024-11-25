@@ -35,24 +35,20 @@ const downwardsCaret = (
 
 const TransposeMenu: React.FC<{
   tuning: { [key: number]: string };
-  numberOfStrings: number;
+  strings: number[];
   transposePlus: (stringNum: number) => void;
   transposeMinus: (stringNum: number) => void;
-}> = ({ tuning, numberOfStrings, transposePlus, transposeMinus }) => {
+}> = ({ tuning, strings, transposePlus, transposeMinus }) => {
   const [customTuning] = useState(tuning);
-  let strings = Array.from(
-    { length: Object.keys(tuning).length },
-    (_, i) => i + 1
-  );
   function transposeNeckPlus() {
     // transpose all notes up a half step
-    for (let i = 1; i <= numberOfStrings; i++) {
+    for (let i = 1; i <= strings.length; i++) {
       transposePlus(i);
     }
   }
   function transposeNeckMinus() {
     // transpose all notes down a half step
-    for (let i = 1; i <= numberOfStrings; i++) {
+    for (let i = 1; i <= strings.length; i++) {
       transposeMinus(i);
     }
   }
@@ -120,7 +116,7 @@ interface SettingsMenuProps {
 
 const SettingsMenu: React.FC<SettingsMenuProps> = ({
   tuning,
-  numberOfStrings,
+  // numberOfStrings,
   stringOrientation,
   settingsMode,
   transposePlus,
@@ -156,7 +152,7 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
           <div className="flex flex-col items-center justify-center max-w-[328px] mx-auto">
             <TransposeMenu
               tuning={tuning}
-              numberOfStrings={numberOfStrings}
+              strings={strings}
               transposeMinus={transposeMinus}
               transposePlus={transposePlus}
             />
