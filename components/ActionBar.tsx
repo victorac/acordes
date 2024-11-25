@@ -20,7 +20,6 @@ const ActionBar: React.FC<ActionBarProps> = ({
   onKeyChangeModeChange,
   onKeyChange,
 }) => {
-  const scrollRef = useRef(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const allKeys = [
     "C",
@@ -36,6 +35,7 @@ const ActionBar: React.FC<ActionBarProps> = ({
     "A#-Bb",
     "B",
   ];
+  const scrollRef = useRef(allKeys.indexOf(keyName) * 64);
 
   useEffect(()=> {
     if(keyChangeMode && scrollContainerRef.current){
