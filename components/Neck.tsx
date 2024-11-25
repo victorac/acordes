@@ -233,7 +233,7 @@ const Neck: React.FC<NeckProps> = ({
         ref={scrollContainerRef}
         onScroll={handleScroll}
         className="
-          container mx-auto my-2
+          container mx-auto mt-2
           sm:my-0
           flex flex-col items-center
           sm:flex-row
