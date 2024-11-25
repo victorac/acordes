@@ -9,7 +9,7 @@ const STORAGE_KEY = "neck-intervals-map";
 
 type Tuning = { [key: number]: string };
 
-const DEFAULT_TUNINGS: { [key: string]: Tuning } = {
+export const DEFAULT_TUNINGS: { [key: string]: Tuning } = {
   four: {
     4: "E",
     3: "A",

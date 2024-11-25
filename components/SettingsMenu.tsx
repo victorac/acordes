@@ -3,31 +3,140 @@ import useScreenSize from "@/hooks/useScreenSize";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 
-const upwardsCaret = (
+const replay = (
   <svg
-    width="7"
-    height="6"
-    viewBox="0 0 7 6"
+    width="18"
+    height="18"
+    viewBox="0 0 18 18"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <mask
+      id="mask0_825_5301"
+      style={{ maskType: "alpha" }}
+      maskUnits="userSpaceOnUse"
+      x="0"
+      y="0"
+      width="18"
+      height="18"
+    >
+      <rect width="18" height="18" fill="#D9D9D9" />
+    </mask>
+    <g mask="url(#mask0_825_5301)">
+      <path
+        d="M9 16.5C8.0625 16.5 7.18438 16.3219 6.36563 15.9656C5.54688 15.6094 4.83438 15.1281 4.22813 14.5219C3.62188 13.9156 3.14062 13.2031 2.78438 12.3844C2.42813 11.5656 2.25 10.6875 2.25 9.75H3.75C3.75 11.2125 4.25937 12.4531 5.27812 13.4719C6.29688 14.4906 7.5375 15 9 15C10.4625 15 11.7031 14.4906 12.7219 13.4719C13.7406 12.4531 14.25 11.2125 14.25 9.75C14.25 8.2875 13.7406 7.04688 12.7219 6.02812C11.7031 5.00938 10.4625 4.5 9 4.5H8.8875L10.05 5.6625L9 6.75L6 3.75L9 0.75L10.05 1.8375L8.8875 3H9C9.9375 3 10.8156 3.17813 11.6344 3.53438C12.4531 3.89062 13.1656 4.37188 13.7719 4.97813C14.3781 5.58438 14.8594 6.29688 15.2156 7.11563C15.5719 7.93438 15.75 8.8125 15.75 9.75C15.75 10.6875 15.5719 11.5656 15.2156 12.3844C14.8594 13.2031 14.3781 13.9156 13.7719 14.5219C13.1656 15.1281 12.4531 15.6094 11.6344 15.9656C10.8156 16.3219 9.9375 16.5 9 16.5Z"
+        fill="#D0D8FF"
+      />
+    </g>
+  </svg>
+);
+
+const add = (
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 18 18"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <mask
+      id="mask0_825_5429"
+      style={{ maskType: "alpha" }}
+      maskUnits="userSpaceOnUse"
+      x="0"
+      y="0"
+      width="18"
+      height="18"
+    >
+      <rect width="18" height="18" fill="#D0D8FF" />
+    </mask>
+    <g mask="url(#mask0_825_5429)">
+      <path
+        d="M8.25 9.75H3.75V8.25H8.25V3.75H9.75V8.25H14.25V9.75H9.75V14.25H8.25V9.75Z"
+        fill="#D0D8FF"
+      />
+    </g>
+  </svg>
+);
+
+const remove = (
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 18 18"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <mask
+      id="mask0_825_5433"
+      style={{ maskType: "alpha" }}
+      maskUnits="userSpaceOnUse"
+      x="0"
+      y="0"
+      width="18"
+      height="18"
+    >
+      <rect width="18" height="18" fill="#D0D8FF" />
+    </mask>
+    <g mask="url(#mask0_825_5433)">
+      <path d="M3.75 9.75V8.25H14.25V9.75H3.75Z" fill="#D0D8FF" />
+    </g>
+  </svg>
+);
+
+const close = (
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 18 18"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <mask
+      id="mask0_825_5383"
+      style={{ maskType: "alpha" }}
+      maskUnits="userSpaceOnUse"
+      x="0"
+      y="0"
+      width="18"
+      height="18"
+    >
+      <rect width="18" height="18" fill="#D0D8FF" />
+    </mask>
+    <g mask="url(#mask0_825_5383)">
+      <path
+        d="M4.8 14.25L3.75 13.2L7.95 9L3.75 4.8L4.8 3.75L9 7.95L13.2 3.75L14.25 4.8L10.05 9L14.25 13.2L13.2 14.25L9 10.05L4.8 14.25Z"
+        fill="#D0D8FF"
+      />
+    </g>
+  </svg>
+);
+
+const caretUp = (
+  <svg
+    width="25"
+    height="24"
+    viewBox="0 0 25 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      d="M3.52 0.820547L6.556 3.85655V5.16455L3.52 2.12855L0.483999 5.16455V3.85655L3.52 0.820547Z"
+      d="M12.332 11.3251L8.88203 14.7751L7.83203 13.7251L12.332 9.2251L16.832 13.7251L15.782 14.7751L12.332 11.3251Z"
       fill="#D0D8FF"
     />
   </svg>
 );
 
-const downwardsCaret = (
+const caretDown = (
   <svg
-    width="7"
-    height="6"
-    viewBox="0 0 7 6"
+    width="25"
+    height="24"
+    viewBox="0 0 25 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      d="M3.52 5.17945L6.556 2.14345V0.835453L3.52 3.87145L0.483999 0.835453V2.14345L3.52 5.17945Z"
+      d="M12.332 12.6749L8.88203 9.2249L7.83203 10.2749L12.332 14.7749L16.832 10.2749L15.782 9.2249L12.332 12.6749Z"
       fill="#D0D8FF"
     />
   </svg>
@@ -39,7 +148,7 @@ const TransposeMenu: React.FC<{
   transposePlus: (stringNum: number) => void;
   transposeMinus: (stringNum: number) => void;
 }> = ({ tuning, strings, transposePlus, transposeMinus }) => {
-  const [customTuning] = useState(tuning);
+  const [isCustomTuning, setIsCustomTuning] = useState(false);
   function transposeNeckPlus() {
     // transpose all notes up a half step
     for (let i = 1; i <= strings.length; i++) {
@@ -52,17 +161,23 @@ const TransposeMenu: React.FC<{
       transposeMinus(i);
     }
   }
+  function toggleCustomTuning() {
+    setIsCustomTuning(!isCustomTuning);
+  }
+  function resetTuning() {
+    // reset tuning to standard
+  }
   return (
-    <div className="w-full flex flex-col gap-2">
+    <div className="w-full h-[102px] flex flex-col gap-2">
       <span className="">Transpose</span>
-      <div className="flex gap-2 leading-5 text-[#D0D8FF]">
+      <div className="flex flex-1 h-full leading-5 text-[#D0D8FF]">
         <button
-          className="w-8 h-10 rounded-3xl bg-[#192149] text-[14px]"
-          onClick={transposeNeckMinus}
+          className="w-8 h-full rounded-3xl bg-[#192149] text-[14px] flex items-center justify-center"
+          onClick={!isCustomTuning ? transposeNeckMinus : resetTuning}
         >
-          -
+          {!isCustomTuning ? remove : replay}
         </button>
-        <div className="flex flex-1 px-1 items-center justify-evenly text-[12px]">
+        <div className="flex flex-1 px-1 items-center justify-evenly text-[12px] bg-[#192149] rounded-3xl">
           {strings.map((stringNumber) => {
             const note = tuning[stringNumber];
             return (
@@ -70,9 +185,9 @@ const TransposeMenu: React.FC<{
                 key={stringNumber}
                 className="flex flex-col items-center justify-center w-full h-full"
               >
-                {customTuning && (
+                {isCustomTuning && (
                   <button onClick={() => transposeMinus(Number(stringNumber))}>
-                    {upwardsCaret}
+                    {caretUp}
                   </button>
                 )}
                 <span
@@ -80,11 +195,11 @@ const TransposeMenu: React.FC<{
                     flex items-center justify-center 
                     text-center"
                 >
-                  {note}
+                  {note.split("-")[0]}
                 </span>
-                {customTuning && (
+                {isCustomTuning && (
                   <button onClick={() => transposePlus(Number(stringNumber))}>
-                    {downwardsCaret}
+                    {caretDown}
                   </button>
                 )}
               </div>
@@ -92,13 +207,20 @@ const TransposeMenu: React.FC<{
           })}
         </div>
         <button
-          className="w-8 h-10 rounded-3xl bg-[#192149] text-[14px]"
-          onClick={transposeNeckPlus}
+          className="w-8 h-full rounded-3xl bg-[#192149] text-[14px] flex items-center justify-center"
+          onClick={!isCustomTuning ? transposeNeckPlus : toggleCustomTuning}
         >
-          +
+          {!isCustomTuning ? add : close}
         </button>
       </div>
-      <button>Custom tuning</button>
+      {!isCustomTuning && (
+        <button
+          onClick={toggleCustomTuning}
+          className="h-[32px] rounded-3xl w-full border border-[#D0D8FF] text-[#D0D8FF]"
+        >
+          Custom tuning
+        </button>
+      )}
     </div>
   );
 };
