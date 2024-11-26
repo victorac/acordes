@@ -36,7 +36,7 @@ const Nut: React.FC<NutProps> = ({
     if (selected) {
       const timeout = setTimeout(() => {
         setSelected(false);
-      }, 1000);
+      }, 500);
       return () => clearTimeout(timeout);
     }
   }, [selected]);
@@ -63,7 +63,7 @@ const Nut: React.FC<NutProps> = ({
           animate="animate"
           exit="exit"
           variants={imageVariants}
-          transition={{ duration: 0.2, ease: "easeInOut" }}
+          transition={{ duration: 0.15, ease: "easeInOut" }}
           layout="size"
         >
           <div className="text-[#E3EFF1] text-[24px] font-semibold leading-7">
@@ -93,8 +93,8 @@ const Nut: React.FC<NutProps> = ({
           animate="animate"
           exit="exit"
           variants={imageVariants}
-          transition={{ duration: 0.2, ease: "easeInOut" }}
-          className="fill-[#192149] hover:fill-[#212C60]"
+          transition={{ duration: 0.15, ease: "easeInOut" }}
+          className="fill-[#192149] hover:fill-[#212C60] stroke-none"
           layout
         >
           <rect width="20" height="20" rx="10" />
