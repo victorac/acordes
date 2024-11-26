@@ -1,7 +1,40 @@
 "use client";
-import useScreenSize from "@/hooks/useScreenSize";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
+
+const PresetsMenu: React.FC<{
+  selectedPreset: string;
+  handleSelectPreset: (preset: string) => void;
+  presets: string[];
+}> = ({ selectedPreset, handleSelectPreset, presets }) => {
+  return (
+    <div className="w-full flex flex-col gap-2">
+      <span className="">Presets</span>
+      <div className="flex h-[40px] leading-5 text-[#D0D8FF]">
+        {presets.map((preset) => (
+          <button
+            key={preset}
+            onClick={() => handleSelectPreset(preset)}
+            className="w-full h-full rounded-3xl bg-[#192149] text-[14px] flex items-center justify-center"
+          >
+            <div className="flex flex-col items-center justify-center">
+              <span
+                className={`${
+                  selectedPreset === preset ? "text-[#E3EFF1] font-bold" : ""
+                }`}
+              >
+                {preset[0].toLocaleUpperCase() + preset.slice(1)}
+              </span>
+              {selectedPreset === preset && (
+                <div className="w-1 h-1 bg-[#E3EFF1] rounded-full"></div>
+              )}
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const replay = (
   <svg
@@ -225,38 +258,135 @@ const TransposeMenu: React.FC<{
   );
 };
 
+const NumberOfStringsMenu: React.FC<{
+  stringCount: number;
+  handleChangeStringCount: (num: number) => void;
+}> = ({ stringCount, handleChangeStringCount }) => {
+  return (
+    <div className="w-full flex flex-col gap-2">
+      <span className="">Number of strings</span>
+      <div className="flex h-[40px] leading-5 text-[14px] text-[#D0D8FF] rounded-3xl bg-[#192149]">
+        <button
+          onClick={() => handleChangeStringCount(6)}
+          className="w-full h-full pl-6 pr-4 pt-1 pb-[6px] flex flex-col items-center justify-center"
+        >
+          <span
+            className={`${stringCount === 6 ? "text-[#E3EFF1] font-bold" : ""}`}
+          >
+            6
+          </span>
+          {stringCount === 6 && (
+            <div className="w-1 h-1 bg-[#E3EFF1] rounded-full"></div>
+          )}
+        </button>
+
+        <button
+          onClick={() => handleChangeStringCount(5)}
+          className="w-full h-full pl-6 pr-4 pt-1 pb-[6px] flex flex-col items-center justify-center"
+        >
+          <span
+            className={`${stringCount === 5 ? "text-[#E3EFF1] font-bold" : ""}`}
+          >
+            5
+          </span>
+          {stringCount === 5 && (
+            <div className="w-1 h-1 bg-[#E3EFF1] rounded-full"></div>
+          )}
+        </button>
+
+        <button
+          onClick={() => handleChangeStringCount(4)}
+          className="w-full h-full pl-6 pr-4 pt-1 pb-[6px] flex flex-col items-center justify-center"
+        >
+          <span
+            className={`${stringCount === 4 ? "text-[#E3EFF1] font-bold" : ""}`}
+          >
+            4
+          </span>
+          {stringCount === 4 && (
+            <div className="w-1 h-1 bg-[#E3EFF1] rounded-full"></div>
+          )}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const StringOrientationMenu: React.FC<{
+  stringOrientation: string;
+  toggleStringOrientation: () => void;
+}> = ({ stringOrientation, toggleStringOrientation }) => {
+  return (
+    <div className="w-full flex flex-col gap-2">
+      <span className="">String orientation</span>
+      <div className="flex h-[40px] text-[14px] leading-5 text-[#D0D8FF] rounded-3xl bg-[#192149]">
+        <button
+          onClick={toggleStringOrientation}
+          className="w-full h-full pl-6 pr-4 pt-1 pb-[6px] flex flex-col items-center justify-center"
+        >
+          <span
+            className={`${
+              stringOrientation === "right" ? "text-[#E3EFF1] font-bold" : ""
+            }`}
+          >
+            Right
+          </span>
+          {stringOrientation === "right" && (
+            <div className="w-1 h-1 bg-[#E3EFF1] rounded-full"></div>
+          )}
+        </button>
+        <button
+          onClick={toggleStringOrientation}
+          className="w-full h-full pl-6 pr-4 pt-1 pb-[6px] flex flex-col items-center justify-center"
+        >
+          <span
+            className={`${
+              stringOrientation === "left" ? "text-[#E3EFF1] font-bold" : ""
+            }`}
+          >
+            Left
+          </span>
+          {stringOrientation === "left" && (
+            <div className="w-1 h-1 bg-[#E3EFF1] rounded-full"></div>
+          )}
+        </button>
+      </div>
+    </div>
+  );
+};
+
 interface SettingsMenuProps {
   tuning: { [key: number]: string };
-  numberOfStrings: number;
+  stringCount: number;
   stringOrientation: "right" | "left";
   settingsMode: boolean;
+  selectedPreset: string;
+  presets: string[];
+  strings: number[];
+  handleSelectPreset: (preset: string) => void;
   transposePlus: (stringNum: number) => void;
   transposeMinus: (stringNum: number) => void;
   toggleStringOrientation: () => void;
-  setNumberOfStrings: (num: number) => void;
+  handleChangeStringCount: (num: number) => void;
 }
 
 const SettingsMenu: React.FC<SettingsMenuProps> = ({
   tuning,
-  // numberOfStrings,
+  stringCount,
   stringOrientation,
   settingsMode,
+  selectedPreset,
+  presets,
+  strings,
+  handleSelectPreset,
   transposePlus,
   transposeMinus,
-  //   toggleStringOrientation,
-  //   setNumberOfStrings,
+  toggleStringOrientation,
+  handleChangeStringCount,
 }) => {
-  const isSmallScreen = useScreenSize();
-
-  let strings = Array.from(
-    { length: Object.keys(tuning).length },
-    (_, i) => i + 1
-  );
+  const localStrings = [...strings].sort((a, b) => a - b);
   if (stringOrientation === "right") {
-    strings = strings.reverse();
-  }
-  if (!isSmallScreen) {
-    strings = strings.reverse();
+    localStrings.reverse();
   }
   return (
     <AnimatePresence>
@@ -265,19 +395,34 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
           initial={{ height: 0 }}
           animate={
             settingsMode
-              ? { height: 280, paddingTop: 24 }
+              ? { height: 350, paddingTop: 24 }
               : { height: 0, paddingTop: 0 }
           }
           exit={{ height: 0, paddingTop: 0 }}
-          className="text-[#B3BDC7] text-[11px] leading-3 px-4 overflow-hidden w-full bg-[#181A24]"
+          className="text-[#B3BDC7] text-[11px] leading-3 px-4 overflow-hidden w-full bg-[#181A24] rounded-b-3xl"
         >
-          <div className="flex flex-col items-center justify-center max-w-[328px] mx-auto">
+          <div className="flex flex-col items-center justify-center max-w-[328px] mx-auto gap-4">
+            <PresetsMenu
+              selectedPreset={selectedPreset}
+              presets={presets}
+              handleSelectPreset={handleSelectPreset}
+            />
             <TransposeMenu
               tuning={tuning}
-              strings={strings}
+              strings={localStrings}
               transposeMinus={transposeMinus}
               transposePlus={transposePlus}
             />
+            <div className="flex items-center w-full gap-4 justify-between">
+              <NumberOfStringsMenu
+                stringCount={stringCount}
+                handleChangeStringCount={handleChangeStringCount}
+              />
+              <StringOrientationMenu
+                stringOrientation={stringOrientation}
+                toggleStringOrientation={toggleStringOrientation}
+              />
+            </div>
           </div>
         </motion.div>
       )}

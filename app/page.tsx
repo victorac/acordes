@@ -13,6 +13,13 @@ export default function Home() {
     tuning,
     neckIntervals,
     settingsMode,
+    stringCount,
+    presets,
+    selectedPreset,
+    strings,
+    isSmallScreen,
+    handleSelectPreset,
+    handleChangeStringCount,
     toggleSettingsMode,
     handleAddNote,
     handleRemoveNote,
@@ -23,7 +30,6 @@ export default function Home() {
     handleEditModeChange,
     handleKeyChangeModeChange,
     handleKeyChange,
-    setNumberOfStrings,
     transposePlus,
     transposeMinus,
     toggleStringOrientation,
@@ -36,21 +42,26 @@ export default function Home() {
         toggleSettingsMode={toggleSettingsMode}
       />
       <SettingsMenu
-        settingsMode={settingsMode}
         tuning={tuning}
-        numberOfStrings={Object.keys(tuning).length}
-        setNumberOfStrings={setNumberOfStrings}
+        stringCount={stringCount}
+        stringOrientation={stringOrientation}
+        settingsMode={settingsMode}
+        selectedPreset={selectedPreset}
+        presets={presets}
+        strings={strings}
+        handleSelectPreset={handleSelectPreset}
         transposePlus={transposePlus}
         transposeMinus={transposeMinus}
-        stringOrientation={stringOrientation}
         toggleStringOrientation={toggleStringOrientation}
+        handleChangeStringCount={handleChangeStringCount}
       />
       <Neck
         keyName={keyName}
         neckIntervals={neckIntervals}
         tuning={tuning}
         editMode={editMode}
-        stringOrientation={stringOrientation}
+        strings={strings}
+        isSmallScreen={isSmallScreen}
         handleAddNote={handleAddNote}
         handleRemoveNote={handleRemoveNote}
         handleNutClick={handleNutClick}

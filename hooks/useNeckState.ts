@@ -1,5 +1,6 @@
 import { findInitialIntervals, NeckState, transposeNote } from "@/utils/notes";
 import { useState, useEffect } from "react";
+import useScreenSize from "./useScreenSize";
 
 interface NeckStateMap {
   [key: string]: NeckState;
@@ -10,26 +11,27 @@ const STORAGE_KEY = "neck-intervals-map";
 type Tuning = { [key: number]: string };
 
 export const DEFAULT_TUNINGS: { [key: string]: Tuning } = {
-  four: {
-    4: "E",
-    3: "A",
-    2: "D",
-    1: "G",
-  },
-  five: {
-    5: "B",
-    4: "E",
-    3: "A",
-    2: "D",
-    1: "G",
-  },
-  six: {
+  guitar: {
     6: "E",
     5: "A",
     4: "D",
     3: "G",
     2: "B",
     1: "E",
+  },
+  bass: {
+    6: "B",
+    5: "E",
+    4: "A",
+    3: "D",
+    2: "G",
+    1: "C",
+  },
+  ukulele: {
+    4: "G",
+    3: "C",
+    2: "E",
+    1: "A",
   },
 };
 
@@ -42,20 +44,20 @@ export function useNeckState(initialKey: string) {
     "right"
   );
   const [settingsMode, setSettingsMode] = useState(false);
-  const [tuning, setTuning] = useState(DEFAULT_TUNINGS.six);
   const [neckIntervalsMap, setNeckIntervalsMap] = useState<NeckStateMap>(() => {
     if (typeof window === "undefined") return {};
     const saved = localStorage.getItem(STORAGE_KEY);
     return saved ? JSON.parse(saved) : {};
   });
+  const [selectedPreset, setSelectedPreset] = useState("guitar");
+  const [tuning, setTuning] = useState(DEFAULT_TUNINGS[selectedPreset]);
+  const [stringCount, setStringCount] = useState(6);
+  const presets = Object.keys(DEFAULT_TUNINGS);
+  const isSmallScreen = useScreenSize();
 
   useEffect(() => {
     if (!neckIntervalsMap[keyName]) {
-      const initialIntervals = findInitialIntervals(
-        intervals,
-        keyName,
-        tuning
-      );
+      const initialIntervals = findInitialIntervals(intervals, keyName, tuning);
       setNeckIntervalsMap((prev) => ({
         ...prev,
         [keyName]: initialIntervals,
@@ -103,12 +105,6 @@ export function useNeckState(initialKey: string) {
       newTuning[stringNum] = newNote;
       return newTuning;
     });
-  }
-
-  function setNumberOfStrings(num: number) {
-    if (num === 4) setTuning(DEFAULT_TUNINGS.four);
-    if (num === 5) setTuning(DEFAULT_TUNINGS.five);
-    if (num === 6) setTuning(DEFAULT_TUNINGS.six);
   }
 
   function handleAddNote(stringNum: number, fretNum: number) {
@@ -197,6 +193,49 @@ export function useNeckState(initialKey: string) {
     setSettingsMode((prev) => !prev);
   }
 
+  function handleSelectPreset(preset: string) {
+    console.log("preset", preset);
+    setSelectedPreset(preset);
+    if (preset === "guitar") {
+      setStringCount(6);
+      setTuning(DEFAULT_TUNINGS.guitar);
+    }
+    if (preset === "bass") {
+      setStringCount(5);
+      setTuning(DEFAULT_TUNINGS.bass);
+    }
+    if (preset === "ukulele") {
+      setStringCount(4);
+      setTuning(DEFAULT_TUNINGS.ukulele);
+    }
+  }
+
+  function handleChangeStringCount(num: number) {
+    if (Object.keys(tuning).length < num) {
+      setTuning((prev) => {
+        const newTuning = { ...prev };
+        for (let i = Object.keys(prev).length + 1; i <= num; i++) {
+          newTuning[i] = "E";
+        }
+        return newTuning;
+      });
+    }
+    setStringCount(num);
+  }
+
+  let strings = [1, 2, 3, 4, 5, 6];
+  const maxTuningIndex = Object.keys(tuning).length;
+  // always show the last strings
+  strings = strings.slice(0, maxTuningIndex).slice(-stringCount);
+  if(selectedPreset === "bass" && stringCount === 4){
+    strings = [2, 3, 4, 5];
+  }
+  if (stringOrientation === "right") {
+    strings.reverse();
+  }
+  if (!isSmallScreen) {
+    strings.reverse();
+  }
 
   return {
     keyName,
@@ -206,6 +245,12 @@ export function useNeckState(initialKey: string) {
     tuning,
     neckIntervals: neckIntervalsMap[keyName] || {},
     settingsMode,
+    selectedPreset,
+    presets,
+    stringCount,
+    strings,
+    isSmallScreen,
+    handleSelectPreset,
     toggleSettingsMode,
     handleAddNote,
     handleRemoveNote,
@@ -216,7 +261,7 @@ export function useNeckState(initialKey: string) {
     handleEditModeChange,
     handleKeyChangeModeChange,
     handleKeyChange,
-    setNumberOfStrings,
+    handleChangeStringCount,
     transposePlus,
     transposeMinus,
     toggleStringOrientation,

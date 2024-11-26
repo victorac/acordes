@@ -143,6 +143,7 @@ const Fret: React.FC<FretProps> = ({
       w-[calc(49px*6)]
       sm:w-[159px] 
       sm:h-[calc(49px*6)]
+      items-center justify-center
       "
     >
       {(isVisible || hasDraggingNoteInFret) &&

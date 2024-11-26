@@ -7,7 +7,6 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import useScreenSize from "@/hooks/useScreenSize";
 import { restrictToFirstScrollableAncestor } from "@dnd-kit/modifiers";
 import { FirstFret, Fret } from "./Fret";
 import { NeckState } from "@/utils/notes";
@@ -39,7 +38,8 @@ interface NeckProps {
   resetNoteDragging: (stringNum: number, fretNum: number) => void;
   tuning: { [key: number]: string };
   editMode: boolean;
-  stringOrientation: "right" | "left";
+  strings: number[];
+  isSmallScreen: boolean;
 }
 
 const Neck: React.FC<NeckProps> = ({
@@ -53,7 +53,8 @@ const Neck: React.FC<NeckProps> = ({
   resetNoteDragging,
   tuning,
   editMode,
-  stringOrientation,
+  strings,
+  isSmallScreen,
 }) => {
   const pointerSensor = useSensor(PointerSensor, {
     activationConstraint: {
@@ -69,8 +70,6 @@ const Neck: React.FC<NeckProps> = ({
   );
 
   const [isClient, setIsClient] = useState(false);
-  const isSmallScreen = useScreenSize();
-
   const prevScrollPosRef = useRef({ x: 0, y: 0 });
   const scrollPosRef = useRef({ x: 0, y: 0 });
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -93,17 +92,6 @@ const Neck: React.FC<NeckProps> = ({
   useLayoutEffect(() => {
     setIsClient(true);
   }, []);
-
-  let strings = Array.from(
-    { length: Object.keys(tuning).length },
-    (_, i) => i + 1
-  );
-  if (stringOrientation === "right") {
-    strings = strings.reverse();
-  }
-  if (!isSmallScreen) {
-    strings = strings.reverse();
-  }
 
   function handleDragStart(event: DragStartEvent) {
     const { active } = event;
