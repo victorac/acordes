@@ -64,43 +64,53 @@ const FirstFret: React.FC<FirstFretProps> = ({
   onNutClick,
 }) => {
   return (
-    <motion.div
+    <div
       className="
-    bg-[#192149] 
-    rounded-full
-    px-4 sm:px-0 sm:py-4 w-[326px] sm:w-[28px] h-[28px] sm:h-[326px]
-    flex
-    sm:flex-col
-    items-center 
-    justify-center
     sticky
     top-0
     sm:top-auto
     sm:left-0
     z-[2000]
+    bg-[#101013]
+    rounded-b-full
+    sm:rounded-none
+    sm:rounded-r-full
     "
-      layout
-      transition={{ duration: 0.05, ease: "easeInOut" }}
     >
-      {strings.map((s, i) => {
-        let { interval } = getNoteData(s, 0, tuning, keyName);
-        if (!neckIntervals[`${s}-0`]) {
-          interval = "";
-        }
-        return (
-          <Nut
-            key={i}
-            interval={interval}
-            stringNum={s}
-            onNutClick={onNutClick}
-            editMode={editMode}
-            isScrolledDown={isScrolledDown}
-            isScrolledUp={isScrolledUp}
-            cellDimensions={cellDimensions}
-          />
-        );
-      })}
-    </motion.div>
+      <motion.div
+        className="
+        bg-[#192149] 
+        rounded-3xl
+        px-4 sm:px-0 sm:py-4 w-[326px] sm:w-auto sm:h-[326px]
+        flex
+        sm:flex-col
+        items-center 
+        justify-center
+        "
+        layout
+        transition={{ duration: 0.05, ease: "easeInOut" }}
+      >
+        {strings.map((s, i) => {
+          let { interval } = getNoteData(s, 0, tuning, keyName);
+          if (!neckIntervals[`${s}-0`]) {
+            interval = "";
+          }
+          return (
+            <Nut
+              key={i}
+              interval={interval}
+              stringNum={s}
+              onNutClick={onNutClick}
+              editMode={editMode}
+              isScrolledDown={isScrolledDown}
+              isScrolledUp={isScrolledUp}
+              cellDimensions={cellDimensions}
+              noteName={tuning[s]}
+            />
+          );
+        })}
+      </motion.div>
+    </div>
   );
 };
 

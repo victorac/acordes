@@ -17,6 +17,7 @@ interface NutProps {
   isScrolledUp: boolean;
   cellDimensions: { height: number; width: number };
   onNutClick: (stringNum: number) => void;
+  noteName: string;
 }
 
 const Nut: React.FC<NutProps> = ({
@@ -27,6 +28,7 @@ const Nut: React.FC<NutProps> = ({
   isScrolledUp,
   cellDimensions,
   onNutClick,
+  noteName,
 }) => {
   const [selected, setSelected] = useState(false);
 
@@ -49,29 +51,56 @@ const Nut: React.FC<NutProps> = ({
   let editModeContent = (
     <AnimatePresence mode="wait">
       {interval ? (
-        <motion.img
-          key="remove"
-          src="remove_nut.svg"
-          alt="remove nut"
+        <motion.div
+          className={`
+        select-none
+        rounded-[200px] p-1
+        w-[41px] h-[72px] sm:w-[72px] sm:h-[41px]
+        flex flex-col items-center justify-center
+        bg-[#212C60]
+      `}
           initial="initial"
           animate="animate"
           exit="exit"
           variants={imageVariants}
           transition={{ duration: 0.2, ease: "easeInOut" }}
-          layout
-        />
+          layout="size"
+        >
+          <div className="text-[#E3EFF1] text-[24px] font-semibold leading-7">
+            {interval}
+          </div>
+          <div className="text-[#535B86] flex flex-col sm:flex-row sm:gap-[2px] justify-center items-center text-[14px] font-semibold leading-4">
+            {noteName.includes("-") ? (
+              <>
+                <div>{noteName.split("-")[0]}</div>
+                <div className="hidden sm:block rounded-full h-1 w-1 bg-[#535B86]"></div>
+                <div>{noteName.split("-")[1]}</div>
+              </>
+            ) : (
+              noteName
+            )}
+          </div>
+        </motion.div>
       ) : (
-        <motion.img
+        <motion.svg
+          width="20"
+          height="20"
+          viewBox="0 0 20 20"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
           key="add"
-          src="add_nut.svg"
-          alt="add nut"
           initial="initial"
           animate="animate"
           exit="exit"
           variants={imageVariants}
           transition={{ duration: 0.2, ease: "easeInOut" }}
+          className="fill-[#192149] hover:fill-[#212C60]"
           layout
-        />
+        >
+          <rect width="20" height="20" rx="10" />
+          <path d="M10 16V4" stroke="#E3EFF1" strokeWidth="2" />
+          <path d="M4 10H16" stroke="#E3EFF1" strokeWidth="2" />
+        </motion.svg>
       )}
     </AnimatePresence>
   );
@@ -99,16 +128,16 @@ const Nut: React.FC<NutProps> = ({
       <button
         onClick={handleNutClick}
         style={{
-          width: cellDimensions.width === 159 ? 28 : cellDimensions.width,
-          height: cellDimensions.height === 159 ? 28 : cellDimensions.height,
+          width:
+            cellDimensions.width === 159 ? "fit-content" : cellDimensions.width,
+          height:
+            cellDimensions.height === 159
+              ? "fit-content"
+              : cellDimensions.height,
         }}
         className="flex items-center justify-center p-1 text-[#D0D8FF] text-[16px] leading-5 font-semibold"
       >
-        <div className=" p-[6px] flex items-center justify-center">
-          <div className="w-[20px] h-[20px] rounded-full bg-[#192149] hover:bg-[#212C60] flex items-center justify-center">
-            {editModeContent}
-          </div>
-        </div>
+        {editModeContent}
       </button>
     );
   }
