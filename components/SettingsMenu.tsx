@@ -184,15 +184,15 @@ const TransposeMenu: React.FC<{
   const [isCustomTuning, setIsCustomTuning] = useState(false);
   function transposeNeckPlus() {
     // transpose all notes up a half step
-    for (let i = 1; i <= strings.length; i++) {
-      transposePlus(i);
-    }
+    strings.forEach((stringNumber) => {
+      transposePlus(stringNumber);
+    });
   }
   function transposeNeckMinus() {
     // transpose all notes down a half step
-    for (let i = 1; i <= strings.length; i++) {
-      transposeMinus(i);
-    }
+    strings.forEach((stringNumber) => {
+      transposeMinus(stringNumber);
+    });
   }
   function toggleCustomTuning() {
     setIsCustomTuning(!isCustomTuning);
