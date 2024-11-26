@@ -57,6 +57,7 @@ export default function Home() {
         toggleStringOrientation={toggleStringOrientation}
         handleChangeStringCount={handleChangeStringCount}
         handleResetApp={handleResetApp}
+        toggleSettingsMode={toggleSettingsMode}
       />
       <Neck
         keyName={keyName}

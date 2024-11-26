@@ -1,5 +1,5 @@
 "use client";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useMotionValue } from "framer-motion";
 import { useState } from "react";
 
 const PresetsMenu: React.FC<{
@@ -369,6 +369,7 @@ interface SettingsMenuProps {
   toggleStringOrientation: () => void;
   handleChangeStringCount: (num: number) => void;
   handleResetApp: () => void;
+  toggleSettingsMode: () => void;
 }
 
 const SettingsMenu: React.FC<SettingsMenuProps> = ({
@@ -385,56 +386,82 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
   toggleStringOrientation,
   handleChangeStringCount,
   handleResetApp,
+  toggleSettingsMode,
 }) => {
   const localStrings = [...strings].sort((a, b) => a - b);
   if (stringOrientation === "right") {
     localStrings.reverse();
   }
+  const height = useMotionValue(0);
+
   return (
-    <AnimatePresence>
-      {settingsMode && (
-        <motion.div
-          initial={{ height: 0 }}
-          animate={
-            settingsMode
-              ? { height: 350, paddingTop: 24 }
-              : { height: 0, paddingTop: 0 }
-          }
-          exit={{ height: 0, paddingTop: 0 }}
-          className="text-[#B3BDC7] text-[11px] leading-3 px-4 overflow-hidden w-full bg-[#181A24] rounded-b-3xl"
-        >
-          <div className="flex flex-col items-center justify-center max-w-[328px] mx-auto gap-4">
-            <PresetsMenu
-              selectedPreset={selectedPreset}
-              presets={presets}
-              handleSelectPreset={handleSelectPreset}
-            />
-            <TransposeMenu
-              tuning={tuning}
-              strings={localStrings}
-              transposeMinus={transposeMinus}
-              transposePlus={transposePlus}
-            />
-            <div className="flex items-center w-full gap-4 justify-between">
-              <NumberOfStringsMenu
-                stringCount={stringCount}
-                handleChangeStringCount={handleChangeStringCount}
-              />
-              <StringOrientationMenu
-                stringOrientation={stringOrientation}
-                toggleStringOrientation={toggleStringOrientation}
-              />
-            </div>
-            <button
-              onClick={handleResetApp}
-              className="self-start text-[#F2B8B5] leading-5 flex items-center justify-center h-8"
+    <>
+      <AnimatePresence>
+        {settingsMode && (
+          <>
+            <motion.div
+              initial={{ height: 0 }}
+              animate={
+                settingsMode
+                  ? { height: 350, paddingTop: 24 }
+                  : { height: 0, paddingTop: 0 }
+              }
+              style={{ height: height }}
+              exit={{ height: 0, paddingTop: 0 }}
+              className="text-[#B3BDC7] text-[11px] leading-3 px-4 overflow-hidden w-full bg-[#181A24] rounded-b-3xl"
             >
-              Reset app
-            </button>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+              <div className="flex flex-col items-center justify-center max-w-[328px] mx-auto gap-4">
+                <PresetsMenu
+                  selectedPreset={selectedPreset}
+                  presets={presets}
+                  handleSelectPreset={handleSelectPreset}
+                />
+                <TransposeMenu
+                  tuning={tuning}
+                  strings={localStrings}
+                  transposeMinus={transposeMinus}
+                  transposePlus={transposePlus}
+                />
+                <div className="flex items-center w-full gap-4 justify-between">
+                  <NumberOfStringsMenu
+                    stringCount={stringCount}
+                    handleChangeStringCount={handleChangeStringCount}
+                  />
+                  <StringOrientationMenu
+                    stringOrientation={stringOrientation}
+                    toggleStringOrientation={toggleStringOrientation}
+                  />
+                </div>
+                <button
+                  onClick={handleResetApp}
+                  className="self-start text-[#F2B8B5] leading-5 flex items-center justify-center h-8"
+                >
+                  Reset app
+                </button>
+              </div>
+            </motion.div>
+            <motion.div
+              drag="y"
+              dragConstraints={{ top: 0, bottom: 0 }}
+              dragElastic={0}
+              onDrag={(_, info) => {
+                const delta = Math.min(info.point.y, 350);
+                height.set(delta);
+              }}
+              onDragEnd={(_, info) => {
+                if (info.point.y <= 100 && settingsMode) {
+                  toggleSettingsMode();
+                }
+              }}
+              exit={{ opacity: 0 }}
+              className="h-5 flex items-center justify-center cursor-n-resize -mt-5 bg-[#181A24] w-full rounded-b-3xl"
+            >
+              <div className="w-[98px] h-1 bg-[#3E4648] rounded-[100px]" />
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
