@@ -13,6 +13,7 @@ const Header: React.FC<HeaderProps> = ({settingsMode, toggleSettingsMode}) => (
   ${settingsMode? "bg-[#181A24]" : "bg-transparent"}
   transition-colors ease-in-out
   ${settingsMode ? "duration-0" : "duration-1000"}
+  z-[1000]
   `}>
     <h1 className="px-4">Acorde</h1>
     <button className="px-4 py-2" onClick={toggleSettingsMode}>

@@ -194,7 +194,6 @@ export function useNeckState(initialKey: string) {
   }
 
   function handleSelectPreset(preset: string) {
-    console.log("preset", preset);
     setSelectedPreset(preset);
     if (preset === "guitar") {
       setStringCount(6);

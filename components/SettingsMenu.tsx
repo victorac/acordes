@@ -425,7 +425,10 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
                 toggleStringOrientation={toggleStringOrientation}
               />
             </div>
-            <button onClick={handleResetApp} className="self-start text-[#F2B8B5] leading-5 flex items-center justify-center h-8">
+            <button
+              onClick={handleResetApp}
+              className="self-start text-[#F2B8B5] leading-5 flex items-center justify-center h-8"
+            >
               Reset app
             </button>
           </div>
