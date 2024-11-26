@@ -55,6 +55,28 @@ export function useNeckState(initialKey: string) {
   const presets = Object.keys(DEFAULT_TUNINGS);
   const isSmallScreen = useScreenSize();
 
+  const cellDimensions = {
+    height: 159,
+    width: 49,
+  };
+
+  if (stringCount === 5) {
+    cellDimensions.width = (49 * 6)/5;
+  } else if (stringCount === 4) {
+    cellDimensions.width = (49 * 6)/4;
+  }
+
+  if (!isSmallScreen) {
+    cellDimensions.width = 159;
+    cellDimensions.height = 49;
+    if (stringCount === 5) {
+      cellDimensions.height = (49 * 6)/5;
+    } else if (stringCount === 4) {
+      cellDimensions.height = (49 * 6)/4;
+    }
+  }
+
+
   useEffect(() => {
     if (!neckIntervalsMap[keyName]) {
       const initialIntervals = findInitialIntervals(intervals, keyName, tuning);
@@ -289,5 +311,6 @@ export function useNeckState(initialKey: string) {
     toggleStringOrientation,
     stringOrientation,
     handleResetApp,
+    cellDimensions,
   };
 }

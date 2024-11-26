@@ -48,6 +48,7 @@ interface FirstFretProps {
   editMode: boolean;
   isScrolledDown: boolean;
   isScrolledUp: boolean;
+  cellDimensions: { height: number; width: number };
   onNutClick: (stringNum: number) => void;
 }
 
@@ -59,6 +60,7 @@ const FirstFret: React.FC<FirstFretProps> = ({
   editMode,
   isScrolledDown,
   isScrolledUp,
+  cellDimensions,
   onNutClick,
 }) => {
   return (
@@ -94,6 +96,7 @@ const FirstFret: React.FC<FirstFretProps> = ({
             editMode={editMode}
             isScrolledDown={isScrolledDown}
             isScrolledUp={isScrolledUp}
+            cellDimensions={cellDimensions}
           />
         );
       })}
@@ -109,6 +112,7 @@ interface FretProps {
   strings: number[];
   index: number;
   editMode: boolean;
+  cellDimensions: { height: number; width: number };
   onAddNote: (stringNum: number, fretNum: number) => void;
   onRemoveNote: (stringNum: number, fretNum: number) => void;
 }
@@ -121,6 +125,7 @@ const Fret: React.FC<FretProps> = ({
   index,
   strings,
   editMode,
+  cellDimensions,
   onAddNote,
   onRemoveNote,
 }) => {
@@ -156,6 +161,7 @@ const Fret: React.FC<FretProps> = ({
             noteState={neckIntervals[`${stringNum}-${fretNumber}`]?.status}
             editMode={editMode}
             onAddNote={onAddNote}
+            cellDimensions={cellDimensions}
           >
             {(() => {
               const noteState = neckIntervals[`${stringNum}-${fretNumber}`];

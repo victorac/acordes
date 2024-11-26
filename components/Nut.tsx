@@ -15,6 +15,7 @@ interface NutProps {
   stringNum: number;
   isScrolledDown: boolean;
   isScrolledUp: boolean;
+  cellDimensions: { height: number; width: number };
   onNutClick: (stringNum: number) => void;
 }
 
@@ -24,6 +25,7 @@ const Nut: React.FC<NutProps> = ({
   stringNum,
   isScrolledDown,
   isScrolledUp,
+  cellDimensions,
   onNutClick,
 }) => {
   const [selected, setSelected] = useState(false);
@@ -96,7 +98,11 @@ const Nut: React.FC<NutProps> = ({
     return (
       <button
         onClick={handleNutClick}
-        className="flex items-center justify-center w-[49px] h-[28px] sm:h-[49px] sm:w-[28px] p-1 text-[#D0D8FF] text-[16px] leading-5 font-semibold"
+        style={{
+          width: cellDimensions.width === 159 ? 28 : cellDimensions.width,
+          height: cellDimensions.height === 159 ? 28 : cellDimensions.height,
+        }}
+        className="flex items-center justify-center p-1 text-[#D0D8FF] text-[16px] leading-5 font-semibold"
       >
         <div className=" p-[6px] flex items-center justify-center">
           <div className="w-[20px] h-[20px] rounded-full bg-[#192149] hover:bg-[#212C60] flex items-center justify-center">
@@ -111,11 +117,14 @@ const Nut: React.FC<NutProps> = ({
 
   return (
     <motion.div
+      style={{
+        width:
+          cellDimensions.width === 159 ? "fit-content" : cellDimensions.width,
+        height:
+          cellDimensions.height === 159 ? "fit-content" : cellDimensions.height,
+      }}
       className={`
       flex items-center justify-center
-      w-[49px]
-      sm:h-[49px] 
-      ${isHidden ? "sm:w-fit" : "sm:w-[28px]"}
       p-1
       text-[#D0D8FF] 
       text-[16px] 

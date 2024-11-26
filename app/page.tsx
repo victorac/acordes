@@ -35,6 +35,7 @@ export default function Home() {
     toggleStringOrientation,
     stringOrientation,
     handleResetApp,
+    cellDimensions,
   } = useNeckState("E");
   return (
     <div className="flex flex-col w-full h-dvh items-center bg-[#101013]">
@@ -70,6 +71,7 @@ export default function Home() {
         startNoteDragging={startNoteDragging}
         updateNotePosition={updateNotePosition}
         resetNoteDragging={resetNoteDragging}
+        cellDimensions={cellDimensions}
       />
       <ActionBar
         keyName={keyName}

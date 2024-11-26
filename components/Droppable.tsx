@@ -5,17 +5,21 @@ interface DroppableProps {
   id: string;
   children?: React.ReactNode;
   className?: string;
+  style?: React.CSSProperties;
 }
 
-const Droppable: React.FC<DroppableProps> = ({ id, className, children }) => {
-  const { isOver, setNodeRef } = useDroppable({
+const Droppable: React.FC<DroppableProps> = ({
+  id,
+  className,
+  style,
+  children,
+}) => {
+  const { setNodeRef } = useDroppable({
     id,
   });
-  const style = {
-    color: isOver ? "green" : undefined,
-  };
+
   return (
-    <div className={className} ref={setNodeRef} style={{ ...style }}>
+    <div style={style} className={className} ref={setNodeRef}>
       {children}
     </div>
   );

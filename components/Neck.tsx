@@ -13,9 +13,6 @@ import { NeckState } from "@/utils/notes";
 import ConditionalDragContext from "./ConditionalDragContext";
 
 const NUMBER_OF_FRETS = 24;
-// 159px is the height of a cell
-const LONG_CELL_SIZE = 159;
-const SHORT_CELL_SIZE = 49;
 const GAP = 8;
 const SCROLL_DOWN_THRESHOLD = 150; // pixels
 const SCROLL_UP_THRESHOLD = 20; // pixels
@@ -40,6 +37,7 @@ interface NeckProps {
   editMode: boolean;
   strings: number[];
   isSmallScreen: boolean;
+  cellDimensions: { height: number; width: number };
 }
 
 const Neck: React.FC<NeckProps> = ({
@@ -55,6 +53,7 @@ const Neck: React.FC<NeckProps> = ({
   editMode,
   strings,
   isSmallScreen,
+  cellDimensions,
 }) => {
   const pointerSensor = useSensor(PointerSensor, {
     activationConstraint: {
@@ -114,24 +113,31 @@ const Neck: React.FC<NeckProps> = ({
         resetNoteDragging(Number(prevStringNum), Number(prevFretNum));
         return;
       }
-      const width = isSmallScreen ? SHORT_CELL_SIZE : LONG_CELL_SIZE;
-      const halfWidth = width / 2;
-      const height = isSmallScreen ? LONG_CELL_SIZE : SHORT_CELL_SIZE;
-      const halfHeight = height / 2;
+
       let deltaX = event.delta.x;
       let deltaY = event.delta.y;
 
       const xCellsMoved =
         deltaX > 0
-          ? Math.floor((deltaX + halfWidth) / width)
-          : Math.ceil((deltaX - halfWidth) / width);
+          ? Math.floor(
+              (deltaX + cellDimensions.width / 2) / cellDimensions.width
+            )
+          : Math.ceil(
+              (deltaX - cellDimensions.width / 2) / cellDimensions.width
+            );
       const yCellsMoved =
         deltaY > 0
-          ? Math.floor((deltaY + halfHeight) / (height + GAP))
-          : Math.ceil((deltaY - halfHeight) / (height + GAP));
+          ? Math.floor(
+              (deltaY + cellDimensions.height / 2) /
+                (cellDimensions.height + GAP)
+            )
+          : Math.ceil(
+              (deltaY - cellDimensions.height / 2) /
+                (cellDimensions.height + GAP)
+            );
 
-      deltaX = deltaX - xCellsMoved * width;
-      deltaY = deltaY - yCellsMoved * (height + GAP);
+      deltaX = deltaX - xCellsMoved * cellDimensions.width;
+      deltaY = deltaY - yCellsMoved * (cellDimensions.height + GAP);
 
       updateNotePosition(
         Number(prevStringNum),
@@ -180,21 +186,21 @@ const Neck: React.FC<NeckProps> = ({
     if (isSmallScreen) {
       const isNearBottom =
         target.scrollTop + target.clientHeight >=
-        target.scrollHeight - LONG_CELL_SIZE;
+        target.scrollHeight - cellDimensions.height;
       if (isNearBottom) {
         target.scrollTop =
           target.scrollTop -
-          LONG_CELL_SIZE * NUMBER_OF_FRETS -
+          cellDimensions.height * NUMBER_OF_FRETS -
           (NUMBER_OF_FRETS - 1) * GAP;
       }
     } else {
       const isNearRight =
         target.scrollLeft + target.clientWidth >=
-        target.scrollWidth - LONG_CELL_SIZE;
+        target.scrollWidth - cellDimensions.width;
       if (isNearRight) {
         target.scrollLeft =
           target.scrollLeft -
-          LONG_CELL_SIZE * NUMBER_OF_FRETS -
+          cellDimensions.width * NUMBER_OF_FRETS -
           (NUMBER_OF_FRETS - 1) * GAP;
       }
     }
@@ -241,6 +247,7 @@ const Neck: React.FC<NeckProps> = ({
           isScrolledDown={isScrolledDown}
           isScrolledUp={isScrolledUp}
           onNutClick={handleNutClick}
+          cellDimensions={cellDimensions}
         />
         <div
           className="
@@ -266,6 +273,7 @@ const Neck: React.FC<NeckProps> = ({
                 onAddNote={handleAddNote}
                 onRemoveNote={handleRemoveNote}
                 neckIntervals={neckIntervals}
+                cellDimensions={cellDimensions}
               />
             );
           })}

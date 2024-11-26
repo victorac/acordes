@@ -10,6 +10,7 @@ interface GridCellProps {
   onAddNote: (string: number, caseNumber: number) => void;
   noteState?: string;
   editMode: boolean;
+  cellDimensions: { height: number; width: number };
   children?: React.ReactNode;
 }
 
@@ -20,6 +21,7 @@ const GridCell: React.FC<GridCellProps> = ({
   fretNumber,
   noteState,
   editMode,
+  cellDimensions,
   onAddNote,
 }) => {
   const thicknessMap: { [key: number]: string } = {
@@ -34,10 +36,6 @@ const GridCell: React.FC<GridCellProps> = ({
     <Droppable
       id={id}
       className={`
-      w-[49px] 
-      h-[159px] 
-      sm:w-[159px] 
-      sm:h-[49px] 
       flex 
       items-center 
       justify-center 
@@ -55,6 +53,7 @@ const GridCell: React.FC<GridCellProps> = ({
       sm:before:translate-x-0
       ${thicknessMap[string]}
       `}
+      style={{width: cellDimensions.width, height: cellDimensions.height}}
     >
       {children}
       {!noteState && editMode && (
