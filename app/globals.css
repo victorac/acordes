@@ -44,3 +44,11 @@ body {
     background: #3C3E4D;
   }
 }
+
+/* In your global CSS */
+html, body {
+  touch-action: pan-x pan-y;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}

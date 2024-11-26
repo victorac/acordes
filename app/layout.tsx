@@ -8,6 +8,7 @@ const nunito = Nunito({ subsets: ["latin"], display: "swap" });
 export const metadata: Metadata = {
   title: "Acordes",
   description: "Chords and intervals visualizer",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
 };
 
 export default function RootLayout({
