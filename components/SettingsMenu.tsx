@@ -368,6 +368,7 @@ interface SettingsMenuProps {
   transposeMinus: (stringNum: number) => void;
   toggleStringOrientation: () => void;
   handleChangeStringCount: (num: number) => void;
+  handleResetApp: () => void;
 }
 
 const SettingsMenu: React.FC<SettingsMenuProps> = ({
@@ -383,6 +384,7 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
   transposeMinus,
   toggleStringOrientation,
   handleChangeStringCount,
+  handleResetApp,
 }) => {
   const localStrings = [...strings].sort((a, b) => a - b);
   if (stringOrientation === "right") {
@@ -423,6 +425,9 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
                 toggleStringOrientation={toggleStringOrientation}
               />
             </div>
+            <button onClick={handleResetApp} className="self-start text-[#F2B8B5] leading-5 flex items-center justify-center h-8">
+              Reset app
+            </button>
           </div>
         </motion.div>
       )}

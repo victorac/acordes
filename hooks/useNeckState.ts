@@ -227,7 +227,7 @@ export function useNeckState(initialKey: string) {
   const maxTuningIndex = Object.keys(tuning).length;
   // always show the last strings
   strings = strings.slice(0, maxTuningIndex).slice(-stringCount);
-  if(selectedPreset === "bass" && stringCount === 4){
+  if (selectedPreset === "bass" && stringCount === 4) {
     strings = [2, 3, 4, 5];
   }
   if (stringOrientation === "right") {
@@ -235,6 +235,29 @@ export function useNeckState(initialKey: string) {
   }
   if (!isSmallScreen) {
     strings.reverse();
+  }
+
+  function handleResetApp() {
+    setNeckIntervalsMap({});
+    setKeyName("E");
+    setEditMode(false);
+    setKeyChangeMode(false);
+    setStringOrientation("right");
+    setSettingsMode(false);
+    setSelectedPreset("guitar");
+    setTuning(DEFAULT_TUNINGS.guitar);
+    setStringCount(6);
+    const initialIntervals = findInitialIntervals(
+      intervals,
+      keyName,
+      DEFAULT_TUNINGS.guitar
+    );
+    setNeckIntervalsMap((prev) => ({
+      ...prev,
+      [keyName]: initialIntervals,
+    }));
+    if (typeof window === "undefined") return;
+    localStorage.removeItem(STORAGE_KEY);
   }
 
   return {
@@ -266,5 +289,6 @@ export function useNeckState(initialKey: string) {
     transposeMinus,
     toggleStringOrientation,
     stringOrientation,
+    handleResetApp,
   };
 }

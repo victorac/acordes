@@ -34,6 +34,7 @@ export default function Home() {
     transposeMinus,
     toggleStringOrientation,
     stringOrientation,
+    handleResetApp,
   } = useNeckState("E");
   return (
     <div className="flex flex-col w-full h-dvh items-center bg-[#101013]">
@@ -54,6 +55,7 @@ export default function Home() {
         transposeMinus={transposeMinus}
         toggleStringOrientation={toggleStringOrientation}
         handleChangeStringCount={handleChangeStringCount}
+        handleResetApp={handleResetApp}
       />
       <Neck
         keyName={keyName}
