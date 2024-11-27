@@ -1,6 +1,6 @@
 "use client";
 import { AnimatePresence, motion, useMotionValue } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const PresetsMenu: React.FC<{
   selectedPreset: string;
@@ -393,7 +393,20 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
     localStrings.reverse();
   }
   const height = useMotionValue(0);
+  // At component level
+  useEffect(() => {
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+    };
 
+    // Add non-passive event listener
+    const element = document.getElementById("drag-handle");
+    element?.addEventListener("touchmove", handleTouchMove, { passive: false });
+
+    return () => {
+      element?.removeEventListener("touchmove", handleTouchMove);
+    };
+  }, []);
   return (
     <>
       <AnimatePresence>
@@ -441,6 +454,7 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
               </div>
             </motion.div>
             <motion.div
+              id="drag-handle"
               drag="y"
               dragConstraints={{ top: 0, bottom: 0 }}
               dragElastic={0}
@@ -454,10 +468,6 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
                 }
               }}
               exit={{ opacity: 0 }}
-              onTouchMove={(e) => {
-                // Prevent pull-to-refresh
-                e.preventDefault();
-              }}
               className="h-7 flex items-center justify-center cursor-n-resize -mt-7 bg-[#181A24] w-full rounded-b-3xl"
             >
               <div className="w-[98px] h-1 bg-[#3E4648] rounded-[100px]" />

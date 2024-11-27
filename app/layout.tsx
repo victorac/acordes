@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { Viewport } from 'next'
 import { Nunito } from "next/font/google";
 import "./globals.css";
 
@@ -8,8 +9,17 @@ const nunito = Nunito({ subsets: ["latin"], display: "swap" });
 export const metadata: Metadata = {
   title: "Acordes",
   description: "Chords and intervals visualizer",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
 };
+
+ 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  // Also supported by less commonly used
+  // interactiveWidget: 'resizes-visual',
+}
 
 export default function RootLayout({
   children,
