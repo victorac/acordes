@@ -407,6 +407,13 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
       element?.removeEventListener("touchmove", handleTouchMove);
     };
   }, []);
+
+  const firefoxStyles = {
+    overscrollBehavior: 'none',
+    scrollSnapType: 'none',
+    touchAction: 'none',
+  } as const;
+  
   return (
     <>
       <AnimatePresence>
@@ -455,6 +462,7 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
             </motion.div>
             <motion.div
               id="drag-handle"
+              style={{ ...firefoxStyles }}
               drag="y"
               dragConstraints={{ top: 0, bottom: 0 }}
               dragElastic={0}
