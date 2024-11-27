@@ -454,6 +454,10 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
                 }
               }}
               exit={{ opacity: 0 }}
+              onTouchMove={(e) => {
+                // Prevent pull-to-refresh
+                e.preventDefault();
+              }}
               className="h-7 flex items-center justify-center cursor-n-resize -mt-7 bg-[#181A24] w-full rounded-b-3xl"
             >
               <div className="w-[98px] h-1 bg-[#3E4648] rounded-[100px]" />
