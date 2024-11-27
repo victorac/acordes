@@ -401,10 +401,14 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
 
     // Add non-passive event listener
     const element = document.getElementById("drag-handle");
-    element?.addEventListener("touchmove", handleTouchMove, { passive: false });
-
+    
+    element?.addEventListener("touchmove", handleTouchMove, { passive: false, capture: true });
+    element?.addEventListener("touchstart", handleTouchMove, { passive: false, capture: true });
+    element?.addEventListener("touchend", handleTouchMove, { passive: false, capture: true });
     return () => {
       element?.removeEventListener("touchmove", handleTouchMove);
+      element?.removeEventListener("touchstart", handleTouchMove);
+      element?.removeEventListener("touchend", handleTouchMove);
     };
   }, []);
 
@@ -412,8 +416,9 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
     overscrollBehavior: 'none',
     scrollSnapType: 'none',
     touchAction: 'none',
+    'MozUserSelect': 'none'
   } as const;
-  
+
   return (
     <>
       <AnimatePresence>
