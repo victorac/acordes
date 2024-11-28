@@ -1,12 +1,13 @@
 "use client";
 import {
+  animate,
   AnimatePresence,
   motion,
   useDragControls,
   useMotionValue,
   useMotionValueEvent,
 } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const PresetsMenu: React.FC<{
   selectedPreset: string;
@@ -404,14 +405,40 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
   const dragStartHeight = useRef(350);
   const dragControls = useDragControls();
   const isDragging = useRef(false);
+  const isAnimating = useRef(false);
+
+  const animateValues = useCallback(() => {
+    console.log("animating values");
+    animate(
+      [
+        [dragY, 0],
+      ],
+      { duration: 0 }
+    );
+  }, [dragY]);
+
+  useEffect(() => {
+    if (settingsMode) {
+      animateValues();
+      dragStartHeight.current = 350;
+      isDragging.current = false;
+    }
+  }, [settingsMode, animateValues]);
 
   useMotionValueEvent(dragY, "change", (latest) => {
-    // if (isDragging.current) return;
-    console.log("x changed to", latest);
-    const newHeight = Math.min(350, dragStartHeight.current + latest)
+    if (isDragging.current) return;
+    console.log("y changed to", latest);
+    const newHeight = Math.min(350, 350 + latest);
+    console.log("new height", newHeight);
     height.set(newHeight);
-    if(newHeight === 350) {
+    if (latest > 0) {
       dragY.set(0);
+    }
+  });
+
+  useMotionValueEvent(height, "change", (latest) => {
+    if (!isAnimating.current && settingsMode && latest <= 100) {
+      toggleSettingsMode();
     }
   });
 
@@ -429,6 +456,12 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
                   : { height: 0, paddingTop: 0 }
               }
               exit={{ height: 0, paddingTop: 0 }}
+              onAnimationStart={() => {
+                isAnimating.current = true;
+              }}
+              onAnimationComplete={() => {
+                isAnimating.current = false;
+              }}
               className="text-[#B3BDC7] text-[11px] leading-3 px-4 overflow-hidden w-full bg-[#181A24] rounded-b-3xl relative"
             >
               <div className="flex flex-col items-center justify-center max-w-[328px] mx-auto gap-4">
@@ -462,36 +495,37 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
               </div>
               <motion.div
                 onPointerDown={(e) => {
+                  console.log("pointer down");
                   dragStartHeight.current = height.get();
                   dragControls.start(e);
                   isDragging.current = true;
                 }}
                 style={{ touchAction: "none" }}
-                className="bg-red-200 absolute bottom-0 left-1/2 -translate-x-1/2 w-[98px] h-7 cursor-ns-resize flex items-center justify-center hover:opacity-75"
+                className="bg-black absolute z-10 bottom-0 left-1/2 -translate-x-1/2 w-full h-5 flex items-center justify-center opacity-25 hover:opacity-35 cursor-ns-resize"
               >
-                <motion.div
-
-                  className="w-[98px] h-1 bg-[#3E4648] rounded-[100px]"
-                />
-                <motion.div
-                  drag="y"
-                  dragControls={dragControls}
-                  style={{ y: dragY }}
-                  dragListener={false}
-                  dragConstraints={{ top: -350, bottom: 350 }}
-                  dragElastic={0.01}
-                  dragMomentum={true}
-                  onDrag={(_, info) => {
-                    const newHeight = dragStartHeight.current + info.offset.y;
-                    height.set(Math.min(350, newHeight));
-                  }}
-                  onDragEnd={() => {
-                    isDragging.current = false;
-                  }}
-                  className="absolute w-full h-full bg-blue-100"
-                />
+                <motion.div className="w-[98px] h-1 bg-[#3E4648] rounded-[100px] " />
               </motion.div>
             </motion.div>
+            <motion.div
+              drag="y"
+              dragControls={dragControls}
+              style={{ y: dragY }}
+              dragListener={false}
+              dragConstraints={{ top: -350, bottom: 0 }}
+              dragElastic={0.1}
+              dragMomentum={true}
+              onDrag={(_, info) => {
+                console.log("ondrag", info.offset.y);
+                let newHeight = dragStartHeight.current + info.offset.y;
+                newHeight = Math.min(350, newHeight);
+                height.set(newHeight);
+                console.log("drag new height", newHeight);
+              }}
+              onDragEnd={() => {
+                isDragging.current = false;
+              }}
+              className="absolute top-[350px] w-24 h-7 "
+            />
           </>
         )}
       </AnimatePresence>
