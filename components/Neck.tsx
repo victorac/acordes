@@ -206,6 +206,61 @@ const Neck: React.FC<NeckProps> = ({
     }
   }
 
+  const velocity = useRef(0);
+  const isScrolling = useRef(false);
+  const lastScrollTime = useRef(0);
+  const lastDeltaY = useRef(0);
+
+  const MAX_VELOCITY = 50; // Prevent excessive speed
+  const DECAY_FACTOR = 0.92; // Slower decay for smoother stop
+
+  const smoothScroll = (targetDelta: number) => {
+    if (!scrollContainerRef.current) return;
+
+    const now = performance.now();
+    const timeDelta = Math.max(16, now - lastScrollTime.current); // Prevent divide by zero
+
+    // Clamp velocity calculation
+    const newVelocity = targetDelta / timeDelta;
+    velocity.current =
+      0.8 * velocity.current +
+      0.2 * Math.min(MAX_VELOCITY, Math.max(-MAX_VELOCITY, newVelocity));
+
+    lastScrollTime.current = now;
+    lastDeltaY.current = targetDelta;
+
+    if (!isScrolling.current) {
+      isScrolling.current = true;
+      animate();
+    }
+  };
+
+  const animate = () => {
+    if (!scrollContainerRef.current || Math.abs(velocity.current) < 0.1) {
+      isScrolling.current = false;
+      velocity.current = 0; // Reset velocity
+      return;
+    }
+
+    try {
+      scrollContainerRef.current.scrollLeft += velocity.current * 16;
+      velocity.current *= DECAY_FACTOR;
+    } catch (error) {
+      console.error(error);
+      // Reset if scroll breaks
+      isScrolling.current = false;
+      velocity.current = 0;
+      return;
+    }
+
+    requestAnimationFrame(animate);
+  };
+
+  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    smoothScroll(e.deltaY);
+  };
+
   // Show loading or placeholder until client-side
   if (!isClient) {
     return (
@@ -226,6 +281,7 @@ const Neck: React.FC<NeckProps> = ({
       <div
         ref={scrollContainerRef}
         onScroll={handleScroll}
+        onWheel={handleWheel}
         className="
           container mx-auto mt-2
           sm:my-0
