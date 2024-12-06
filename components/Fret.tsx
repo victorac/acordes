@@ -162,56 +162,59 @@ const Fret: React.FC<FretProps> = ({
       "
     >
       {(isVisible || hasDraggingNoteInFret) &&
-        strings.map((stringNum) => (
-          <GridCell
-            id={`cell-${stringNum}-${fretNumber}-${index}`}
-            key={`${stringNum}-${fretNumber}-${index}`}
-            fretNumber={fretNumber}
-            string={stringNum}
-            noteState={neckIntervals[`${stringNum}-${fretNumber}`]?.status}
-            editMode={editMode}
-            onAddNote={onAddNote}
-            cellDimensions={cellDimensions}
-          >
-            {(() => {
-              const noteState = neckIntervals[`${stringNum}-${fretNumber}`];
-              if (!noteState) return null;
-              // get interval and note name based on string and fret number
-              const { interval, noteName } = getNoteData(
-                stringNum,
-                fretNumber,
-                tuning,
-                keyName
-              );
-              const noteId = `note-${stringNum}-${fretNumber}-${index}`;
-              function handleCloseNote() {
-                onRemoveNote(stringNum, fretNumber);
-              }
-              return (
-                <>
-                  <Note
-                    key={noteId}
-                    id={noteId}
-                    interval={interval}
-                    noteName={noteName}
-                    state={noteState}
-                    stringNumber={stringNum}
-                    fretNumber={fretNumber}
-                    editMode={editMode}
-                  />
-                  <AnimatePresence mode="wait">
-                    {editMode && noteState.status !== "dragging" && (
-                      <CloseNoteButton
-                        key={`${noteId}-close`}
-                        onClick={handleCloseNote}
-                      />
-                    )}
-                  </AnimatePresence>
-                </>
-              );
-            })()}
-          </GridCell>
-        ))}
+        strings.map((stringNum) => {
+          // get interval and note name based on string and fret number
+          const { interval, noteName } = getNoteData(
+            stringNum,
+            fretNumber,
+            tuning,
+            keyName
+          );
+          return (
+            <GridCell
+              id={`cell-${stringNum}-${fretNumber}-${index}`}
+              key={`${stringNum}-${fretNumber}-${index}`}
+              fretNumber={fretNumber}
+              string={stringNum}
+              noteState={neckIntervals[`${stringNum}-${fretNumber}`]?.status}
+              editMode={editMode}
+              onAddNote={onAddNote}
+              cellDimensions={cellDimensions}
+              isRoot={interval === "R"}
+            >
+              {(() => {
+                const noteState = neckIntervals[`${stringNum}-${fretNumber}`];
+                if (!noteState) return null;
+                const noteId = `note-${stringNum}-${fretNumber}-${index}`;
+                function handleCloseNote() {
+                  onRemoveNote(stringNum, fretNumber);
+                }
+                return (
+                  <>
+                    <Note
+                      key={noteId}
+                      id={noteId}
+                      interval={interval}
+                      noteName={noteName}
+                      state={noteState}
+                      stringNumber={stringNum}
+                      fretNumber={fretNumber}
+                      editMode={editMode}
+                    />
+                    <AnimatePresence mode="wait">
+                      {editMode && noteState.status !== "dragging" && (
+                        <CloseNoteButton
+                          key={`${noteId}-close`}
+                          onClick={handleCloseNote}
+                        />
+                      )}
+                    </AnimatePresence>
+                  </>
+                );
+              })()}
+            </GridCell>
+          );
+        })}
       {isVisible && (
         <div className="absolute top-0 left-0 w-fit text-[#B3BDC7] text-xs">
           {fretNumber}

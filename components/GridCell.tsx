@@ -11,6 +11,7 @@ interface GridCellProps {
   noteState?: string;
   editMode: boolean;
   cellDimensions: { height: number; width: number };
+  isRoot: boolean;
   children?: React.ReactNode;
 }
 
@@ -22,6 +23,7 @@ const GridCell: React.FC<GridCellProps> = ({
   noteState,
   editMode,
   cellDimensions,
+  isRoot,
   onAddNote,
 }) => {
   const thicknessMap: { [key: number]: string } = {
@@ -32,6 +34,9 @@ const GridCell: React.FC<GridCellProps> = ({
     5: "before:w-[5px] sm:before:h-[5px]",
     6: "before:w-[6px] sm:before:h-[6px]",
   };
+  let beforeBgColor = noteState ? "before:bg-[#E3EFF1]" : "before:bg-[#3E4648]";
+  if (isRoot) beforeBgColor = "before:bg-[#E6FF81]";
+
   return (
     <Droppable
       id={id}
@@ -43,7 +48,7 @@ const GridCell: React.FC<GridCellProps> = ({
       before:absolute
       before:content-['']
       before:h-full
-      ${noteState ? "before:bg-[#E3EFF1]" : "before:bg-[#3E4648]"}
+      ${beforeBgColor}
       before:left-1/2
       before:-translate-x-1/2
       sm:before:w-full

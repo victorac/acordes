@@ -61,21 +61,20 @@ export function useNeckState(initialKey: string) {
   };
 
   if (stringCount === 5) {
-    cellDimensions.width = (49 * 6)/5;
+    cellDimensions.width = (49 * 6) / 5;
   } else if (stringCount === 4) {
-    cellDimensions.width = (49 * 6)/4;
+    cellDimensions.width = (49 * 6) / 4;
   }
 
   if (!isSmallScreen) {
     cellDimensions.width = 159;
     cellDimensions.height = 49;
     if (stringCount === 5) {
-      cellDimensions.height = (49 * 6)/5;
+      cellDimensions.height = (49 * 6) / 5;
     } else if (stringCount === 4) {
-      cellDimensions.height = (49 * 6)/4;
+      cellDimensions.height = (49 * 6) / 4;
     }
   }
-
 
   useEffect(() => {
     if (!neckIntervalsMap[keyName]) {
@@ -229,6 +228,14 @@ export function useNeckState(initialKey: string) {
       setStringCount(4);
       setTuning(DEFAULT_TUNINGS.ukulele);
     }
+    const initialIntervals = findInitialIntervals(
+      intervals,
+      keyName,
+      DEFAULT_TUNINGS[preset]
+    );
+    setNeckIntervalsMap({
+      [keyName]: initialIntervals,
+    });
   }
 
   function handleChangeStringCount(num: number) {
@@ -246,8 +253,12 @@ export function useNeckState(initialKey: string) {
 
   let strings = [1, 2, 3, 4, 5, 6];
   const maxTuningIndex = Object.keys(tuning).length;
-  // always show the last strings
-  strings = strings.slice(0, maxTuningIndex).slice(-stringCount);
+  // remove strings from the end for ukulele
+  if (selectedPreset === "ukulele") {
+    strings = strings.slice(0, maxTuningIndex).slice(0, stringCount);
+  } else {
+    strings = strings.slice(0, maxTuningIndex).slice(-stringCount);
+  }
   if (selectedPreset === "bass" && stringCount === 4) {
     strings = [2, 3, 4, 5];
   }
