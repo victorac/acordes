@@ -36,6 +36,7 @@ const GridCell: React.FC<GridCellProps> = ({
   };
   let beforeBgColor = noteState ? "before:bg-[#E3EFF1]" : "before:bg-[#3E4648]";
   if (isRoot) beforeBgColor = "before:bg-[#E6FF81]";
+  const buttonColor = isRoot ? "bg-[#E6FF81] text-[#535B86]" : "bg-[#3E4648] text-[#E3EFF1]";
 
   return (
     <Droppable
@@ -58,13 +59,13 @@ const GridCell: React.FC<GridCellProps> = ({
       sm:before:translate-x-0
       ${thicknessMap[string]}
       `}
-      style={{width: cellDimensions.width, height: cellDimensions.height}}
+      style={{ width: cellDimensions.width, height: cellDimensions.height }}
     >
       {children}
       {!noteState && editMode && (
         <button
           onClick={() => onAddNote(string, fretNumber)}
-          className="w-6 h-8 rounded-full bg-[#3E4648] px-1 py-2 flex items-center justify-center z-10 text-[#E3EFF1] select-none"
+          className={`w-6 h-8 rounded-full ${buttonColor} px-1 py-2 flex items-center justify-center z-10 select-none $`}
         >
           +
         </button>
